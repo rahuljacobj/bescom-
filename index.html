@@ -3,217 +3,344 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>BESCOM Quotation Builder</title>
+<meta name="color-scheme" content="light only"/>
+<title>BESCOM Quotation Builder — JC. Enterprises</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  /* Force light mode regardless of device/OS setting */
+  :root, html, body {
+    color-scheme: light only !important;
+    forced-color-adjust: none !important;
+  }
 
   :root {
-    --bg:#0f1117; --surface:#181c27; --surface2:#1e2436;
-    --border:#2a3050; --border-bright:#3a4570;
-    --accent:#f59e0b; --accent-dim:rgba(245,158,11,.10); --accent-glow:rgba(245,158,11,.25);
-    --text:#e8ecf4; --text-dim:#8892aa; --text-muted:#4a5270;
-    --red:#ef4444; --green:#22c55e;
-    --mono:'IBM Plex Mono',monospace; --sans:'IBM Plex Sans',sans-serif; --display:'Syne',sans-serif;
+    --bg:       #f4f6fa;
+    --surface:  #ffffff;
+    --surface2: #f0f2f8;
+    --border:   #dde2ef;
+    --border2:  #c8d0e7;
+    --accent:   #cc0000;
+    --accent-dim: rgba(204,0,0,.07);
+    --accent-glow: rgba(204,0,0,.18);
+    --text:     #1a1d2e;
+    --text-dim: #4a5070;
+    --text-muted: #8a92b0;
+    --green:    #16a34a;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'Inter', sans-serif;
   }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh}
 
-  /* HEADER */
-  .app-header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 32px;
-    display:flex;align-items:center;justify-content:space-between;height:60px;
-    position:sticky;top:0;z-index:100}
-  .app-logo{font-family:var(--display);font-size:18px;font-weight:800;letter-spacing:.04em;
-    color:var(--accent);display:flex;align-items:center;gap:10px}
-  .header-tag{font-family:var(--mono);font-size:10px;color:var(--text-muted);letter-spacing:.12em;
-    text-transform:uppercase;border:1px solid var(--border);padding:3px 8px;border-radius:3px}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  .main{max-width:960px;margin:0 auto;padding:36px 24px 80px}
-
-  .section-label{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;
-    color:var(--text-muted);margin-bottom:10px;display:flex;align-items:center;gap:8px}
-  .section-label::after{content:'';flex:1;height:1px;background:var(--border)}
-
-  .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px;margin-bottom:24px}
-
-  /* COLLAPSIBLE LETTERHEAD CARD */
-  .card-collapsible{}
-  .card-toggle-header{
-    display:flex;align-items:center;justify-content:space-between;
-    cursor:pointer;user-select:none;
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    -webkit-text-size-adjust: 100%;
   }
-  .card-toggle-header:hover .toggle-chevron{color:var(--accent)}
-  .toggle-chevron{color:var(--text-muted);transition:transform .25s,color .2s}
-  .toggle-chevron.open{transform:rotate(180deg)}
-  .card-body{overflow:hidden;max-height:0;transition:max-height .35s ease}
-  .card-body.open{max-height:1000px}
-  .card-body-inner{padding-top:20px}
 
-  /* LETTERHEAD PREVIEW */
-  .lh-preview{
-    background:#fff;border:1px solid #dde;border-radius:6px;padding:20px 24px;
-    text-align:center;margin-bottom:16px;font-family:Arial,sans-serif;
+  /* ── APP HEADER ── */
+  .app-header {
+    background: #fff;
+    border-bottom: 2px solid var(--accent);
+    padding: 0 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 58px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
   }
-  .lh-preview-name{font-size:22px;font-weight:900;color:#c00;letter-spacing:.04em;margin-bottom:4px}
-  .lh-preview-tag{font-size:10px;color:#333;line-height:1.6;margin-bottom:4px}
-  .lh-preview-addr{font-size:9.5px;color:#444;line-height:1.6}
-  .lh-preview-label{font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:var(--text-muted);
-    text-transform:uppercase;margin-bottom:8px}
+  .app-logo {
+    font-size: 18px; font-weight: 700; color: var(--accent);
+    display: flex; align-items: center; gap: 10px; letter-spacing: .02em;
+  }
+  .header-tag {
+    font-family: var(--mono); font-size: 10px; color: var(--text-muted);
+    letter-spacing: .12em; text-transform: uppercase;
+    border: 1px solid var(--border); padding: 3px 8px; border-radius: 3px;
+    background: var(--surface2);
+  }
 
-  .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-  .info-grid .full{grid-column:1/-1}
-  .field-group{display:flex;flex-direction:column;gap:6px}
-  .field-label{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted)}
-  .field-input{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:10px 14px;
-    color:var(--text);font-family:var(--sans);font-size:14px;outline:none;
-    transition:border-color .2s,box-shadow .2s;width:100%}
-  .field-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
-  .field-input::placeholder{color:var(--text-muted)}
-  .field-input.sm{font-size:13px;padding:8px 12px}
+  .main { max-width: 960px; margin: 0 auto; padding: 32px 20px 80px; }
 
-  /* COLOR PICKER ROW */
-  .color-row{display:flex;align-items:center;gap:10px}
-  .color-swatch{width:36px;height:36px;border-radius:6px;border:2px solid var(--border);
-    cursor:pointer;overflow:hidden;padding:0;background:none;flex-shrink:0}
-  .color-swatch input[type=color]{width:200%;height:200%;margin:-50%;border:none;cursor:pointer;opacity:0;position:absolute}
-  .color-swatch-vis{width:100%;height:100%;border-radius:4px}
-  .color-picker-wrap{position:relative;width:36px;height:36px;flex-shrink:0}
-  .color-picker-wrap input[type=color]{position:absolute;inset:0;width:100%;height:100%;
-    opacity:0;cursor:pointer;border:none;padding:0}
-  .color-vis{width:36px;height:36px;border-radius:6px;border:2px solid var(--border);pointer-events:none}
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-family: var(--mono); font-size: 9px; letter-spacing: .18em;
+    text-transform: uppercase; color: var(--text-muted);
+    margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+  }
+  .section-label::after { content:''; flex:1; height:1px; background: var(--border); }
 
-  /* TABLE */
-  .table-wrapper{overflow-x:auto}
-  table{width:100%;border-collapse:collapse;font-size:13px}
-  thead tr{border-bottom:2px solid var(--border-bright)}
-  th{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;
-    color:var(--text-muted);font-weight:500;text-align:left;padding:8px 10px 12px}
-  th.num{text-align:right} th.center{text-align:center}
-  tbody tr{border-bottom:1px solid var(--border);transition:background .15s}
-  tbody tr:hover{background:var(--accent-dim)}
-  td{padding:5px 4px;vertical-align:middle}
+  /* ── CARD ── */
+  .card {
+    background: #fff; border: 1px solid var(--border);
+    border-radius: 10px; padding: 22px; margin-bottom: 22px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  }
 
-  .sl-badge{font-family:var(--mono);font-size:11px;color:var(--text-muted);text-align:center;width:36px;display:block}
-  .td-input{background:transparent;border:1px solid transparent;border-radius:5px;padding:7px 8px;
-    color:var(--text);font-family:var(--sans);font-size:13px;outline:none;width:100%;
-    transition:border-color .15s,background .15s}
-  .td-input:focus{border-color:var(--accent);background:var(--accent-dim)}
-  .td-input.mono{font-family:var(--mono);text-align:right}
-  .td-input::placeholder{color:var(--text-muted)}
-  .final-price{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent);text-align:right;padding-right:10px}
-  .delete-btn{background:none;border:none;cursor:pointer;color:var(--text-muted);
-    padding:6px;border-radius:4px;display:flex;align-items:center;justify-content:center;
-    transition:color .15s,background .15s}
-  .delete-btn:hover{color:var(--red);background:rgba(239,68,68,.1)}
+  /* ── COLLAPSIBLE ── */
+  .card-toggle-header {
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer; user-select: none;
+  }
+  .toggle-chevron { color: var(--text-muted); transition: transform .25s, color .2s; }
+  .toggle-chevron.open { transform: rotate(180deg); color: var(--accent); }
+  .card-body { overflow: hidden; max-height: 0; transition: max-height .35s ease; }
+  .card-body.open { max-height: 1200px; }
+  .card-body-inner { padding-top: 20px; }
 
-  .add-row-btn{display:flex;align-items:center;gap:8px;background:none;
-    border:1px dashed var(--border-bright);color:var(--text-dim);font-family:var(--sans);font-size:13px;
-    padding:10px 16px;border-radius:6px;cursor:pointer;margin-top:12px;
-    transition:all .2s;width:100%;justify-content:center}
-  .add-row-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+  /* ── LIVE PREVIEW ── */
+  .lh-preview-label {
+    font-family: var(--mono); font-size: 8px; letter-spacing: .1em;
+    color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;
+  }
+  .lh-preview {
+    background: #fff; border: 1px solid #dde; border-radius: 6px;
+    padding: 16px 20px; text-align: center;
+    font-family: Arial, sans-serif; margin-bottom: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  }
+  .lh-preview-name { font-size: 20px; font-weight: 900; color: #cc0000; letter-spacing: .04em; margin-bottom: 3px; }
+  .lh-preview-tag  { font-size: 9.5px; color: #333; line-height: 1.65; }
+  .lh-preview-addr { font-size: 9px; color: #555; line-height: 1.6; margin-top: 3px; }
 
-  /* TOTALS */
-  .totals-area{display:flex;justify-content:flex-end;margin-top:20px}
-  .totals-box{background:var(--bg);border:1px solid var(--border-bright);border-radius:8px;padding:16px 24px;min-width:290px}
-  .total-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:13px;color:var(--text-dim)}
-  .total-row.subtotal{border-bottom:1px solid var(--border);padding-bottom:8px;margin-bottom:6px}
-  .total-row.grand{padding-top:8px;font-family:var(--display);font-size:18px;font-weight:700;color:var(--text)}
-  .total-value{font-family:var(--mono);font-weight:600;color:var(--accent)}
-  .total-row.grand .total-value{font-size:20px}
+  /* ── FIELDS ── */
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .info-grid .full { grid-column: 1/-1; }
+  .field-group { display: flex; flex-direction: column; gap: 5px; }
+  .field-label {
+    font-family: var(--mono); font-size: 9px; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--text-muted); font-weight: 500;
+  }
+  .field-input {
+    background: #fff; border: 1px solid var(--border); border-radius: 6px;
+    padding: 9px 13px; color: var(--text); font-family: var(--sans); font-size: 13.5px;
+    outline: none; transition: border-color .2s, box-shadow .2s; width: 100%;
+  }
+  .field-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+  .field-input::placeholder { color: var(--text-muted); }
+  .field-input.sm { font-size: 13px; padding: 8px 12px; }
 
-  .gst-row{display:flex;align-items:center;justify-content:space-between;padding:4px 0;font-size:13px;color:var(--text-dim)}
-  .gst-controls{display:flex;align-items:center;gap:8px}
-  .gst-input-small{background:var(--surface2);border:1px solid var(--border);border-radius:4px;
-    padding:3px 6px;color:var(--accent);font-family:var(--mono);font-size:12px;width:50px;text-align:center;outline:none}
-  .toggle{position:relative;width:34px;height:18px;cursor:pointer}
-  .toggle input{opacity:0;width:0;height:0}
-  .toggle-track{position:absolute;inset:0;background:var(--border-bright);border-radius:99px;transition:background .2s}
-  .toggle input:checked~.toggle-track{background:var(--accent)}
-  .toggle-thumb{position:absolute;width:12px;height:12px;background:white;border-radius:50%;top:3px;left:3px;transition:transform .2s}
-  .toggle input:checked~.toggle-thumb{transform:translateX(16px)}
+  /* ── COLOR PICKERS ── */
+  .color-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .color-picker-wrap { position: relative; width: 36px; height: 36px; flex-shrink: 0; }
+  .color-picker-wrap input[type=color] {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    opacity: 0; cursor: pointer; border: none; padding: 0;
+  }
+  .color-vis { width: 36px; height: 36px; border-radius: 6px; border: 2px solid var(--border); pointer-events: none; }
+  .preset-btn {
+    width: 22px; height: 22px; border-radius: 4px;
+    border: 2px solid rgba(0,0,0,.12); cursor: pointer;
+    transition: transform .15s, border-color .15s; flex-shrink: 0;
+  }
+  .preset-btn:hover { transform: scale(1.2); border-color: #333; }
 
-  .notes-input{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:12px 14px;
-    color:var(--text);font-family:var(--sans);font-size:13px;outline:none;width:100%;
-    resize:vertical;min-height:72px;transition:border-color .2s}
-  .notes-input:focus{border-color:var(--accent)}
-  .notes-input::placeholder{color:var(--text-muted)}
+  /* ── ITEMS TABLE ── */
+  .table-wrapper { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead tr { border-bottom: 2px solid var(--border2); background: var(--surface2); }
+  th {
+    font-family: var(--mono); font-size: 9px; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--text-muted); font-weight: 600;
+    text-align: left; padding: 9px 10px 9px;
+  }
+  th.num { text-align: right; } th.center { text-align: center; }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background .12s; }
+  tbody tr:hover { background: var(--accent-dim); }
+  td { padding: 5px 4px; vertical-align: middle; }
 
-  /* BUTTONS */
-  .actions-bar{display:flex;gap:12px;flex-wrap:wrap}
-  .btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:7px;
-    font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;border:none}
-  .btn-primary{background:var(--accent);color:#000}
-  .btn-primary:hover{background:#fbbf24;box-shadow:0 0 24px var(--accent-glow);transform:translateY(-1px)}
-  .btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border-bright)}
-  .btn-secondary:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+  .sl-badge {
+    font-family: var(--mono); font-size: 11px; color: var(--text-muted);
+    text-align: center; width: 36px; display: block;
+  }
+  .td-input {
+    background: transparent; border: 1px solid transparent; border-radius: 5px;
+    padding: 7px 8px; color: var(--text); font-family: var(--sans); font-size: 13px;
+    outline: none; width: 100%; transition: border-color .15s, background .15s;
+  }
+  .td-input:focus { border-color: var(--accent); background: var(--accent-dim); }
+  .td-input.mono { font-family: var(--mono); text-align: right; }
+  .td-input::placeholder { color: var(--text-muted); }
+  .final-price { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--accent); text-align: right; padding-right: 10px; }
+  .delete-btn {
+    background: none; border: none; cursor: pointer; color: var(--text-muted);
+    padding: 6px; border-radius: 4px; display: flex; align-items: center;
+    transition: color .15s, background .15s;
+  }
+  .delete-btn:hover { color: #dc2626; background: rgba(220,38,38,.08); }
 
-  .toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--green);
-    color:var(--green);font-family:var(--mono);font-size:12px;padding:10px 18px;border-radius:7px;
-    opacity:0;transform:translateY(10px);transition:all .3s;z-index:999;pointer-events:none}
-  .toast.show{opacity:1;transform:translateY(0)}
+  .add-row-btn {
+    display: flex; align-items: center; gap: 8px; background: none;
+    border: 1px dashed var(--border2); color: var(--text-dim); font-family: var(--sans);
+    font-size: 13px; padding: 10px 16px; border-radius: 6px; cursor: pointer;
+    margin-top: 12px; transition: all .2s; width: 100%; justify-content: center;
+  }
+  .add-row-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
 
-  .badge-new{background:var(--accent);color:#000;font-family:var(--mono);font-size:8px;
-    font-weight:700;padding:2px 6px;border-radius:3px;letter-spacing:.06em;margin-left:6px}
+  /* ── TOTALS ── */
+  .totals-area { display: flex; justify-content: flex-end; margin-top: 18px; }
+  .totals-box {
+    background: var(--surface2); border: 1px solid var(--border2);
+    border-radius: 8px; padding: 14px 22px; min-width: 280px;
+  }
+  .total-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-size: 13px; color: var(--text-dim); }
+  .total-row.subtotal { border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 6px; }
+  .total-row.grand { padding-top: 8px; font-size: 17px; font-weight: 700; color: var(--text); }
+  .total-value { font-family: var(--mono); font-weight: 700; color: var(--accent); }
+  .total-row.grand .total-value { font-size: 19px; }
+
+  .gst-row { display: flex; align-items: center; justify-content: space-between; padding: 4px 0; font-size: 13px; color: var(--text-dim); }
+  .gst-controls { display: flex; align-items: center; gap: 8px; }
+  .gst-input-small {
+    background: #fff; border: 1px solid var(--border); border-radius: 4px;
+    padding: 3px 6px; color: var(--accent); font-family: var(--mono);
+    font-size: 12px; width: 50px; text-align: center; outline: none;
+  }
+  .toggle { position: relative; width: 34px; height: 18px; cursor: pointer; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-track { position: absolute; inset: 0; background: var(--border2); border-radius: 99px; transition: background .2s; }
+  .toggle input:checked ~ .toggle-track { background: var(--accent); }
+  .toggle-thumb { position: absolute; width: 12px; height: 12px; background: white; border-radius: 50%; top: 3px; left: 3px; transition: transform .2s; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+  .toggle input:checked ~ .toggle-thumb { transform: translateX(16px); }
+
+  .notes-input {
+    background: #fff; border: 1px solid var(--border); border-radius: 6px;
+    padding: 11px 13px; color: var(--text); font-family: var(--sans);
+    font-size: 13px; outline: none; width: 100%; resize: vertical;
+    min-height: 72px; transition: border-color .2s;
+  }
+  .notes-input:focus { border-color: var(--accent); }
+  .notes-input::placeholder { color: var(--text-muted); }
+
+  /* ── BUTTONS ── */
+  .actions-bar { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px; padding: 11px 22px;
+    border-radius: 7px; font-family: var(--sans); font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all .2s; border: none;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #aa0000; box-shadow: 0 4px 16px rgba(204,0,0,.3); transform: translateY(-1px); }
+  .btn-secondary { background: #fff; color: var(--text); border: 1px solid var(--border2); }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  .toast {
+    position: fixed; bottom: 24px; right: 24px; background: #fff;
+    border: 1px solid var(--green); color: var(--green);
+    font-family: var(--mono); font-size: 12px; padding: 10px 18px;
+    border-radius: 7px; opacity: 0; transform: translateY(10px);
+    transition: all .3s; z-index: 999; pointer-events: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,.1);
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  .badge-new {
+    background: var(--accent); color: #fff; font-family: var(--mono);
+    font-size: 8px; font-weight: 700; padding: 2px 6px;
+    border-radius: 3px; letter-spacing: .06em; margin-left: 6px;
+  }
 
   @media(max-width:600px){
-    .info-grid{grid-template-columns:1fr} .info-grid .full{grid-column:1}
-    .actions-bar{flex-direction:column} .btn{justify-content:center}
+    .info-grid { grid-template-columns: 1fr; }
+    .info-grid .full { grid-column: 1; }
+    .actions-bar { flex-direction: column; }
+    .btn { justify-content: center; }
   }
 
-  /* ═══════════ PRINT / PDF STYLES ═══════════ */
-  #printSheet{display:none}
+  /* ══════════════════════════════════════
+     PRINT / PDF — forced white, no dark
+  ══════════════════════════════════════ */
+  #printSheet { display: none; }
 
-  @media print{
-    @page{margin:10mm 12mm;size:A4}
-    body>*:not(#printSheet){display:none!important}
-    #printSheet{display:block!important;font-family:'Segoe UI',Arial,sans-serif;color:#111;font-size:11px}
+  @media print {
+    @page { margin: 10mm 12mm; size: A4; }
+
+    * { color-scheme: light only !important; }
+    body > *:not(#printSheet) { display: none !important; }
+
+    #printSheet {
+      display: block !important;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: #111 !important;
+      background: #fff !important;
+      font-size: 11px;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
 
     /* letterhead */
-    .ps-letterhead{text-align:center;padding:10px 0 10px;border-bottom:2px solid #c00;margin-bottom:10px}
-    .ps-lh-name{font-size:24px;font-weight:900;letter-spacing:.05em;margin-bottom:4px}
-    .ps-lh-tag{font-size:9.5px;color:#222;line-height:1.65;margin-bottom:3px}
-    .ps-lh-addr{font-size:9px;color:#444;line-height:1.6}
-    .ps-lh-divider{height:3px;margin-top:10px}
+    .ps-letterhead {
+      text-align: center; padding: 8px 0 10px;
+      border-bottom-width: 3px; border-bottom-style: solid;
+      margin-bottom: 10px;
+    }
+    .ps-lh-name { font-size: 22px; font-weight: 900; letter-spacing: .05em; margin-bottom: 4px; }
+    .ps-lh-tag  { font-size: 9.5px; color: #333 !important; line-height: 1.65; }
+    .ps-lh-addr { font-size: 9px; color: #444 !important; line-height: 1.6; margin-top: 3px; }
 
-    /* meta row */
-    .ps-meta{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;padding:0 2px}
-    .ps-meta-left{font-size:9.5px;color:#333;line-height:1.7}
-    .ps-meta-right{text-align:right}
-    .ps-qt-label{font-size:13px;font-weight:700;letter-spacing:.04em}
-    .ps-qt-val{font-size:9.5px;color:#555;margin-top:2px}
+    /* meta */
+    .ps-meta { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; padding: 0 2px; }
+    .ps-meta-left { font-size: 9.5px; color: #333 !important; line-height: 1.7; }
+    .ps-meta-right { text-align: right; }
+    .ps-qt-label { font-size: 14px; font-weight: 800; letter-spacing: .04em; }
+    .ps-qt-val   { font-size: 9.5px; color: #555 !important; margin-top: 2px; }
 
-    /* consumer box */
-    .ps-consumer{background:#eef2ff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;
-      padding:7px 12px;border-radius:3px;margin-bottom:10px}
-    .ps-consumer-grid{display:grid;grid-template-columns:1fr 1fr}
-    .ps-lbl{font-size:7px;text-transform:uppercase;letter-spacing:.1em;color:#667!important;font-weight:700}
-    .ps-val{font-size:10px;color:#223!important;font-weight:500;margin-top:1px}
-
-    /* table */
-    .ps-table{width:100%;border-collapse:collapse;margin-bottom:8px}
-    .ps-table th{font-size:8px;text-transform:uppercase;letter-spacing:.1em;padding:6px 8px;text-align:left;
-      -webkit-print-color-adjust:exact;print-color-adjust:exact}
-    .ps-table th.r{text-align:right}
-    .ps-table td{padding:6px 8px;border-bottom:1px solid #dde;font-size:10px;color:#111!important}
-    .ps-table td.r{text-align:right;font-family:monospace}
-    .ps-table td.fp{text-align:right;font-family:monospace;font-weight:700}
-    .ps-table tr:nth-child(even) td{background:#f5f7ff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    /* items table */
+    .ps-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+    .ps-table th {
+      font-size: 8px; text-transform: uppercase; letter-spacing: .1em;
+      padding: 6px 8px; text-align: left; color: #fff !important;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .ps-table th.r { text-align: right; }
+    .ps-table td { padding: 6px 8px; border-bottom: 1px solid #dde; font-size: 10px; color: #111 !important; background: #fff !important; }
+    .ps-table td.r { text-align: right; font-family: monospace; }
+    .ps-table td.fp { text-align: right; font-family: monospace; font-weight: 700; }
+    .ps-table tr:nth-child(even) td { background: #f7f8ff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
     /* totals */
-    .ps-totals{display:flex;justify-content:flex-end;margin-bottom:12px}
-    .ps-totals-inner{min-width:220px;border:1px solid #dde;border-radius:4px;overflow:hidden}
-    .ps-tot-row{display:flex;justify-content:space-between;padding:5px 10px;font-size:10px;border-bottom:1px solid #eee}
-    .ps-tot-row.grand{font-weight:700;font-size:13px;border-bottom:none;
-      -webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .ps-totals { display: flex; justify-content: flex-end; margin-bottom: 10px; }
+    .ps-totals-inner { min-width: 220px; border: 1px solid #dde; border-radius: 4px; overflow: hidden; }
+    .ps-tot-row { display: flex; justify-content: space-between; padding: 5px 10px; font-size: 10px; color: #333 !important; border-bottom: 1px solid #eee; background: #fff !important; }
+    .ps-tot-row.grand {
+      font-weight: 700; font-size: 13px; border-bottom: none;
+      color: #fff !important;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .ps-tot-row.grand span { color: #fff !important; }
 
-    /* notes */
-    .ps-notes{border-radius:3px;padding:8px 12px;margin-bottom:12px;border-left-width:3px;border-left-style:solid}
-    .ps-notes-label{font-size:7px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:4px}
-    .ps-notes-text{font-size:9px;line-height:1.5;white-space:pre-wrap}
+    /* bank + notes bottom section */
+    .ps-bottom {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 10px; gap: 12px;
+    }
+    .ps-bank {
+      border: 1px solid #dde; border-radius: 4px; padding: 8px 12px;
+      min-width: 200px; background: #f9f9ff !important;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .ps-bank-label { font-size: 7px; text-transform: uppercase; letter-spacing: .12em; font-weight: 700; color: #555 !important; margin-bottom: 5px; }
+    .ps-bank-row   { font-size: 9.5px; color: #111 !important; display: flex; gap: 6px; margin-bottom: 3px; }
+    .ps-bank-key   { font-weight: 600; min-width: 70px; color: #333 !important; }
+    .ps-bank-val   { font-family: monospace; color: #111 !important; font-size: 9.5px; }
+
+    .ps-notes {
+      flex: 1; border-left-width: 3px; border-left-style: solid;
+      border-radius: 3px; padding: 8px 12px;
+      background: #fffbeb !important;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .ps-notes-label { font-size: 7px; text-transform: uppercase; letter-spacing: .1em; font-weight: 700; margin-bottom: 4px; color: #92400e !important; }
+    .ps-notes-text  { font-size: 9px; color: #555 !important; line-height: 1.5; white-space: pre-wrap; }
 
     /* sign */
-    .ps-sign-row{display:flex;justify-content:flex-end;margin-bottom:10px}
-    .ps-sign{border-top:1px solid #888;width:140px;padding-top:5px;font-size:8px;color:#555!important;text-align:center;margin-top:24px}
-    .ps-footer{border-top:1px solid #ccc;padding-top:6px;display:flex;justify-content:space-between;font-size:7.5px;color:#999!important}
+    .ps-sign-row { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+    .ps-sign { border-top: 1px solid #888; width: 140px; padding-top: 5px; font-size: 8px; color: #555 !important; text-align: center; margin-top: 24px; }
+
+    /* footer */
+    .ps-footer { border-top: 1px solid #ccc; padding-top: 5px; display: flex; justify-content: space-between; font-size: 7.5px; color: #999 !important; }
   }
 </style>
 </head>
@@ -221,24 +348,24 @@
 
 <header class="app-header">
   <div class="app-logo">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-   quotation
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    QuoteForge
   </div>
   <div class="header-tag">BESCOM Contractor Tool</div>
 </header>
 
 <div class="main">
 
-  <!-- ══ LETTERHEAD CUSTOMISER ══ -->
+  <!-- ═══ LETTERHEAD PANEL ═══ -->
   <div class="section-label">
-    Letterhead / Company Branding
-    <span class="badge-new">NEW</span>
+    Letterhead / Branding
+    <span class="badge-new">CUSTOM</span>
   </div>
-  <div class="card card-collapsible">
-    <div class="card-toggle-header" onclick="toggleLetterhead()">
+  <div class="card">
+    <div class="card-toggle-header" onclick="toggleLH()">
       <div style="display:flex;align-items:center;gap:10px">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
-        <span style="font-size:14px;font-weight:600">Customise Your Letterhead</span>
+        <span style="font-size:14px;font-weight:600;color:var(--text)">Customise Your Letterhead</span>
         <span style="font-family:var(--mono);font-size:10px;color:var(--text-muted)">— click to expand</span>
       </div>
       <svg class="toggle-chevron" id="lhChevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
@@ -246,45 +373,56 @@
 
     <div class="card-body" id="lhBody">
       <div class="card-body-inner">
-
-        <!-- LIVE PREVIEW -->
         <div class="lh-preview-label">Live Preview</div>
-        <div class="lh-preview" id="lhPreview">
-          <div class="lh-preview-name" id="prev-name">JC. ENTERPRISES</div>
+        <div class="lh-preview" id="lhPreview" style="border-bottom:3px solid #cc0000">
+          <div class="lh-preview-name" id="prev-name" style="color:#cc0000">JC. ENTERPRISES</div>
           <div class="lh-preview-tag" id="prev-tag1">Govt. Approved Class 'A' Electrical Contractors &amp; Engineers</div>
           <div class="lh-preview-tag" id="prev-tag2">BESCOM Approved Vendor for Rooftop Solar Panels Dealers for TATA, Adani &amp; Goldi | Solar LED Street Lights | All Types of Indoor and Outdoor LED Fixtures</div>
-          <div class="lh-preview-addr" id="prev-addr"></div>
+          <div class="lh-preview-addr" id="prev-addr">Registered Office: 7th Main Rd, Hongasandra, Bengaluru, Karnataka 560114 | Mobile: +91-7760837805 | Mail: johnbenadick322@gmail.com</div>
         </div>
 
         <div class="info-grid">
           <div class="field-group full">
             <label class="field-label">Company Name</label>
-            <input class="field-input" id="lhCompany" value="JC. ENTERPRISES" placeholder="Your company name" oninput="updatePreview()"/>
+            <input class="field-input" id="lhCompany" value="JC. ENTERPRISES" oninput="updatePreview()"/>
           </div>
-
           <div class="field-group full">
             <label class="field-label">Tagline / Description Line 1</label>
-            <input class="field-input sm" id="lhTag1" value="Govt. Approved Class 'A' Electrical Contractors &amp; Engineers" placeholder="e.g. Govt. Approved Class 'A' Electrical Contractors" oninput="updatePreview()"/>
+            <input class="field-input sm" id="lhTag1" value="Govt. Approved Class 'A' Electrical Contractors &amp; Engineers" oninput="updatePreview()"/>
           </div>
-
           <div class="field-group full">
             <label class="field-label">Tagline / Description Line 2 <span style="color:var(--text-muted);font-size:8px">(optional)</span></label>
-            <input class="field-input sm" id="lhTag2" value="BESCOM Approved Vendor for Rooftop Solar Panels Dealers for TATA, Adani &amp; Goldi | Solar LED Street Lights | All Types of Indoor and Outdoor LED Fixtures" placeholder="Additional certifications, products offered…" oninput="updatePreview()"/>
+            <input class="field-input sm" id="lhTag2" value="BESCOM Approved Vendor for Rooftop Solar Panels Dealers for TATA, Adani &amp; Goldi | Solar LED Street Lights | All Types of Indoor and Outdoor LED Fixtures" oninput="updatePreview()"/>
           </div>
-
           <div class="field-group full">
             <label class="field-label">Registered / Office Address</label>
-            <input class="field-input sm" id="lhAddress" value="7th Main Rd, Hongasandra, Bengaluru, Karnataka 560114" placeholder="Full address" oninput="updatePreview()"/>
+            <input class="field-input sm" id="lhAddress" value="7th Main Rd, Hongasandra, Bengaluru, Karnataka 560114" oninput="updatePreview()"/>
           </div>
-
           <div class="field-group">
             <label class="field-label">Mobile / Phone</label>
-            <input class="field-input sm" id="lhMobile" value="+91-7760837805" placeholder="+91-XXXXXXXXXX" oninput="updatePreview()"/>
+            <input class="field-input sm" id="lhMobile" value="+91-7760837805" oninput="updatePreview()"/>
           </div>
-
           <div class="field-group">
             <label class="field-label">Email</label>
-            <input class="field-input sm" id="lhEmail" value="johnbenadick322@gmail.com" placeholder="your@email.com" oninput="updatePreview()"/>
+            <input class="field-input sm" id="lhEmail" value="johnbenadick322@gmail.com" oninput="updatePreview()"/>
+          </div>
+
+          <!-- BANK DETAILS -->
+          <div class="field-group">
+            <label class="field-label">Bank Account Number</label>
+            <input class="field-input sm" id="bankAccNo" value="09231100000309" placeholder="Account number"/>
+          </div>
+          <div class="field-group">
+            <label class="field-label">IFSC Code</label>
+            <input class="field-input sm" id="bankIfsc" value="PSIB0000923" placeholder="IFSC Code"/>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Bank Name <span style="color:var(--text-muted);font-size:8px">(optional)</span></label>
+            <input class="field-input sm" id="bankName" placeholder="e.g. Punjab & Sind Bank"/>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Account Type <span style="color:var(--text-muted);font-size:8px">(optional)</span></label>
+            <input class="field-input sm" id="bankType" placeholder="e.g. Current / Savings"/>
           </div>
 
           <!-- COLOR PICKERS -->
@@ -293,45 +431,43 @@
             <div class="color-row">
               <div class="color-picker-wrap">
                 <div class="color-vis" id="nameColorVis" style="background:#cc0000"></div>
-                <input type="color" id="nameColor" value="#cc0000" oninput="syncColor('nameColor','nameColorVis');updatePreview()"/>
+                <input type="color" id="nameColor" value="#cc0000" oninput="syncColor('nameColor','nameColorVis','nameColorHex');updatePreview()"/>
               </div>
               <input class="field-input sm" id="nameColorHex" value="#cc0000" placeholder="#cc0000"
-                oninput="hexInput('nameColor','nameColorVis','nameColorHex');updatePreview()" style="max-width:110px"/>
-              <div style="display:flex;gap:6px;flex-wrap:wrap">
-                <button class="preset-btn" style="background:#cc0000" onclick="setColor('#cc0000')"></button>
-                <button class="preset-btn" style="background:#1a56db" onclick="setColor('#1a56db')"></button>
-                <button class="preset-btn" style="background:#047857" onclick="setColor('#047857')"></button>
-                <button class="preset-btn" style="background:#111827" onclick="setColor('#111827')"></button>
-                <button class="preset-btn" style="background:#7c3aed" onclick="setColor('#7c3aed')"></button>
-                <button class="preset-btn" style="background:#b45309" onclick="setColor('#b45309')"></button>
+                oninput="hexInput('nameColor','nameColorVis','nameColorHex');updatePreview()" style="max-width:100px"/>
+              <div style="display:flex;gap:5px;flex-wrap:wrap">
+                <button class="preset-btn" style="background:#cc0000" onclick="setNameColor('#cc0000')"></button>
+                <button class="preset-btn" style="background:#1a56db" onclick="setNameColor('#1a56db')"></button>
+                <button class="preset-btn" style="background:#047857" onclick="setNameColor('#047857')"></button>
+                <button class="preset-btn" style="background:#111827" onclick="setNameColor('#111827')"></button>
+                <button class="preset-btn" style="background:#7c3aed" onclick="setNameColor('#7c3aed')"></button>
+                <button class="preset-btn" style="background:#b45309" onclick="setNameColor('#b45309')"></button>
               </div>
             </div>
           </div>
-
           <div class="field-group">
-            <label class="field-label">Accent / Border Colour</label>
+            <label class="field-label">Accent / Divider Colour</label>
             <div class="color-row">
               <div class="color-picker-wrap">
                 <div class="color-vis" id="accentColorVis" style="background:#cc0000"></div>
-                <input type="color" id="accentColor" value="#cc0000" oninput="syncColor('accentColor','accentColorVis');updatePreview()"/>
+                <input type="color" id="accentColor" value="#cc0000" oninput="syncColor('accentColor','accentColorVis','accentColorHex');updatePreview()"/>
               </div>
               <input class="field-input sm" id="accentColorHex" value="#cc0000" placeholder="#cc0000"
-                oninput="hexInput('accentColor','accentColorVis','accentColorHex');updatePreview()" style="max-width:110px"/>
+                oninput="hexInput('accentColor','accentColorVis','accentColorHex');updatePreview()" style="max-width:100px"/>
             </div>
           </div>
-
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ══ CUSTOMER DETAILS ══ -->
+  <!-- ═══ CUSTOMER / QUOTE DETAILS ═══ -->
   <div class="section-label">Customer &amp; Quotation Details</div>
   <div class="card">
     <div class="info-grid">
       <div class="field-group">
         <label class="field-label">Quotation Number</label>
-        <input class="field-input" id="quoteNo" placeholder="e.g. QT-2025-001"/>
+        <input class="field-input" id="quoteNo" placeholder="e.g. QT-2026-001"/>
       </div>
       <div class="field-group">
         <label class="field-label">Date</label>
@@ -348,19 +484,19 @@
     </div>
   </div>
 
-  <!-- ══ LINE ITEMS ══ -->
+  <!-- ═══ LINE ITEMS ═══ -->
   <div class="section-label">Line Items</div>
   <div class="card">
     <div class="table-wrapper">
       <table>
         <thead>
           <tr>
-            <th class="center" style="width:46px">Sl No</th>
-            <th style="min-width:200px">Item Description</th>
-            <th class="num" style="width:90px">Qty</th>
-            <th class="num" style="width:120px">Unit Price (₹)</th>
-            <th class="num" style="width:130px">Final Price (₹)</th>
-            <th style="width:40px"></th>
+            <th class="center" style="width:44px">Sl No</th>
+            <th style="min-width:180px">Item Description</th>
+            <th class="num" style="width:80px">Qty</th>
+            <th class="num" style="width:115px">Unit Price (₹)</th>
+            <th class="num" style="width:125px">Final Price (₹)</th>
+            <th style="width:38px"></th>
           </tr>
         </thead>
         <tbody id="itemsBody"></tbody>
@@ -382,7 +518,7 @@
             <input class="gst-input-small" id="gstRate" type="number" value="18" min="0" max="100" oninput="recalcTotals()"/>
             <span style="font-family:var(--mono);font-size:12px;color:var(--text-muted)">%</span>
             <label class="toggle">
-              <input type="checkbox" id="gstToggle" onchange="recalcTotals()" checked/>
+              <input type="checkbox" id="gstToggle" checked onchange="recalcTotals()"/>
               <div class="toggle-track"></div>
               <div class="toggle-thumb"></div>
             </label>
@@ -400,7 +536,7 @@
     </div>
   </div>
 
-  <!-- ══ NOTES ══ -->
+  <!-- ═══ NOTES ═══ -->
   <div class="section-label">Terms &amp; Notes</div>
   <div class="card">
     <div class="field-group">
@@ -409,7 +545,7 @@
     </div>
   </div>
 
-  <!-- ══ EXPORT ══ -->
+  <!-- ═══ EXPORT ═══ -->
   <div class="section-label">Export</div>
   <div class="actions-bar">
     <button class="btn btn-primary" onclick="exportPDF()">
@@ -423,42 +559,33 @@
   </div>
 </div>
 
+<!-- Print sheet built dynamically -->
 <div id="printSheet"></div>
 <div class="toast" id="toast"></div>
 
-<style>
-  .preset-btn{width:22px;height:22px;border-radius:4px;border:2px solid rgba(255,255,255,.15);
-    cursor:pointer;transition:transform .15s,border-color .15s;flex-shrink:0}
-  .preset-btn:hover{transform:scale(1.2);border-color:white}
-</style>
-
 <script>
   /* ── Letterhead toggle ── */
-  function toggleLetterhead() {
-    const body = document.getElementById('lhBody');
-    const chev = document.getElementById('lhChevron');
-    body.classList.toggle('open');
-    chev.classList.toggle('open');
+  function toggleLH() {
+    document.getElementById('lhBody').classList.toggle('open');
+    document.getElementById('lhChevron').classList.toggle('open');
   }
-  // Start open
   document.getElementById('lhBody').classList.add('open');
   document.getElementById('lhChevron').classList.add('open');
 
-  /* ── Color helpers ── */
-  function syncColor(inputId, visId) {
-    const v = document.getElementById(inputId).value;
+  /* ── Colour helpers ── */
+  function syncColor(id, visId, hexId) {
+    const v = document.getElementById(id).value;
     document.getElementById(visId).style.background = v;
-    const hexId = inputId + 'Hex';
-    if (document.getElementById(hexId)) document.getElementById(hexId).value = v;
+    if (hexId) document.getElementById(hexId).value = v;
   }
-  function hexInput(inputId, visId, hexId) {
+  function hexInput(id, visId, hexId) {
     const v = document.getElementById(hexId).value;
     if (/^#[0-9a-fA-F]{6}$/.test(v)) {
-      document.getElementById(inputId).value = v;
+      document.getElementById(id).value = v;
       document.getElementById(visId).style.background = v;
     }
   }
-  function setColor(hex) {
+  function setNameColor(hex) {
     document.getElementById('nameColor').value = hex;
     document.getElementById('nameColorVis').style.background = hex;
     document.getElementById('nameColorHex').value = hex;
@@ -467,28 +594,26 @@
 
   /* ── Live preview ── */
   function updatePreview() {
-    const company = document.getElementById('lhCompany').value || 'Company Name';
-    const tag1    = document.getElementById('lhTag1').value;
-    const tag2    = document.getElementById('lhTag2').value;
-    const addr    = document.getElementById('lhAddress').value;
-    const mobile  = document.getElementById('lhMobile').value;
-    const email   = document.getElementById('lhEmail').value;
-    const nameCol = document.getElementById('nameColor').value;
-    const accCol  = document.getElementById('accentColor').value;
+    const company  = document.getElementById('lhCompany').value  || 'Company Name';
+    const tag1     = document.getElementById('lhTag1').value;
+    const tag2     = document.getElementById('lhTag2').value;
+    const addr     = document.getElementById('lhAddress').value;
+    const mobile   = document.getElementById('lhMobile').value;
+    const email    = document.getElementById('lhEmail').value;
+    const nameCol  = document.getElementById('nameColor').value;
+    const accentCol= document.getElementById('accentColor').value;
 
     document.getElementById('prev-name').textContent = company;
     document.getElementById('prev-name').style.color = nameCol;
     document.getElementById('prev-tag1').textContent = tag1;
     document.getElementById('prev-tag2').textContent = tag2;
 
-    let addrParts = [];
-    if (addr)   addrParts.push('Registered Office: ' + addr);
-    if (mobile) addrParts.push('Mobile: ' + mobile);
-    if (email)  addrParts.push('Mail: ' + email);
-    document.getElementById('prev-addr').textContent = addrParts.join('  |  ');
-
-    // update preview bottom border colour
-    document.getElementById('lhPreview').style.borderBottom = `3px solid ${accCol}`;
+    let ap = [];
+    if (addr)   ap.push('Registered Office: ' + addr);
+    if (mobile) ap.push('Mobile: ' + mobile);
+    if (email)  ap.push('Mail: ' + email);
+    document.getElementById('prev-addr').textContent = ap.join('  |  ');
+    document.getElementById('lhPreview').style.borderBottom = `3px solid ${accentCol}`;
   }
   updatePreview();
 
@@ -539,8 +664,8 @@
   function recalcTotals() {
     let sub = 0;
     rows.forEach(id => {
-      sub += (parseFloat(document.getElementById(`qty-${id}`)?.value)||0)
-           * (parseFloat(document.getElementById(`price-${id}`)?.value)||0);
+      sub += (parseFloat(document.getElementById(`qty-${id}`)?.value) || 0)
+           * (parseFloat(document.getElementById(`price-${id}`)?.value) || 0);
     });
     const gstOn   = document.getElementById('gstToggle').checked;
     const gstRate = parseFloat(document.getElementById('gstRate').value) || 0;
@@ -548,11 +673,11 @@
     document.getElementById('subtotalDisp').textContent = '₹' + sub.toFixed(2);
     document.getElementById('gstDisp').textContent      = '₹' + gstAmt.toFixed(2);
     document.getElementById('gstLabel').textContent     = gstOn ? `GST @${gstRate}%` : 'GST (off)';
-    document.getElementById('gstRow').style.opacity     = gstOn ? '1' : '0.35';
+    document.getElementById('gstRow').style.opacity     = gstOn ? '1' : '0.4';
     document.getElementById('grandDisp').textContent    = '₹' + (sub + gstAmt).toFixed(2);
   }
 
-  /* ── Collect all form data ── */
+  /* ── Collect data ── */
   function collectData() {
     const gstOn   = document.getElementById('gstToggle').checked;
     const gstRate = parseFloat(document.getElementById('gstRate').value) || 0;
@@ -566,36 +691,39 @@
     });
     const gstAmt = gstOn ? sub * gstRate / 100 : 0;
     return {
-      // letterhead
-      lhCompany: document.getElementById('lhCompany').value || 'Company Name',
-      lhTag1:    document.getElementById('lhTag1').value,
-      lhTag2:    document.getElementById('lhTag2').value,
-      lhAddress: document.getElementById('lhAddress').value,
-      lhMobile:  document.getElementById('lhMobile').value,
-      lhEmail:   document.getElementById('lhEmail').value,
-      nameColor: document.getElementById('nameColor').value,
+      lhCompany:   document.getElementById('lhCompany').value   || 'Company Name',
+      lhTag1:      document.getElementById('lhTag1').value,
+      lhTag2:      document.getElementById('lhTag2').value,
+      lhAddress:   document.getElementById('lhAddress').value,
+      lhMobile:    document.getElementById('lhMobile').value,
+      lhEmail:     document.getElementById('lhEmail').value,
+      bankAccNo:   document.getElementById('bankAccNo').value,
+      bankIfsc:    document.getElementById('bankIfsc').value,
+      bankName:    document.getElementById('bankName').value,
+      bankType:    document.getElementById('bankType').value,
+      nameColor:   document.getElementById('nameColor').value,
       accentColor: document.getElementById('accentColor').value,
-      // quote
-      quoteNo:  document.getElementById('quoteNo').value  || '—',
+      quoteNo:  document.getElementById('quoteNo').value   || '—',
       date:     document.getElementById('quoteDate').value || new Date().toISOString().slice(0,10),
-      customer: document.getElementById('customerName').value   || '—',
-      address:  document.getElementById('customerAddress').value|| '—',
+      customer: document.getElementById('customerName').value    || '—',
+      address:  document.getElementById('customerAddress').value || '—',
       notes:    document.getElementById('notes').value || '',
       items, sub, gstOn, gstRate, gstAmt, grand: sub + gstAmt
     };
   }
 
-  /* ── Build print sheet + trigger print ── */
+  /* ── Export PDF via print dialog ── */
   function exportPDF() {
     const d = collectData();
-    const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+    const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
 
     // address line
-    let addrParts = [];
-    if (d.lhAddress) addrParts.push('Registered Office: ' + d.lhAddress);
-    if (d.lhMobile)  addrParts.push('Mobile: ' + d.lhMobile);
-    if (d.lhEmail)   addrParts.push('Mail: ' + d.lhEmail);
+    let ap = [];
+    if (d.lhAddress) ap.push('Registered Office: ' + d.lhAddress);
+    if (d.lhMobile)  ap.push('Mobile: ' + d.lhMobile);
+    if (d.lhEmail)   ap.push('Mail: ' + d.lhEmail);
 
+    // item rows
     const itemRows = d.items.map(r => `
       <tr>
         <td style="text-align:center">${r.sl}</td>
@@ -606,77 +734,90 @@
       </tr>`).join('');
 
     const gstRowHTML = d.gstOn
-      ? `<div class="ps-tot-row"><span>GST @ ${d.gstRate}%</span><span>&#8377; ${d.gstAmt.toFixed(2)}</span></div>`
-      : '';
+      ? `<div class="ps-tot-row"><span>GST @ ${d.gstRate}%</span><span>&#8377; ${d.gstAmt.toFixed(2)}</span></div>` : '';
 
-    const notesHTML = d.notes ? `
-      <div class="ps-notes" style="background:#fffbeb;border-left-color:${d.accentColor}">
-        <div class="ps-notes-label" style="color:${d.accentColor}">Terms &amp; Notes</div>
-        <div class="ps-notes-text" style="color:#555">${esc(d.notes)}</div>
+    // bank details block
+    let bankRows = '';
+    if (d.bankAccNo) bankRows += `<div class="ps-bank-row"><span class="ps-bank-key">Account No</span><span class="ps-bank-val">${esc(d.bankAccNo)}</span></div>`;
+    if (d.bankIfsc)  bankRows += `<div class="ps-bank-row"><span class="ps-bank-key">IFSC Code</span><span class="ps-bank-val">${esc(d.bankIfsc)}</span></div>`;
+    if (d.bankName)  bankRows += `<div class="ps-bank-row"><span class="ps-bank-key">Bank Name</span><span class="ps-bank-val">${esc(d.bankName)}</span></div>`;
+    if (d.bankType)  bankRows += `<div class="ps-bank-row"><span class="ps-bank-key">Acct. Type</span><span class="ps-bank-val">${esc(d.bankType)}</span></div>`;
+    const bankHTML = bankRows ? `
+      <div class="ps-bank">
+        <div class="ps-bank-label">&#x1F3E6; Bank / Payment Details</div>
+        ${bankRows}
       </div>` : '';
 
-    const tag2HTML = d.lhTag2
-      ? `<div class="ps-lh-tag">${esc(d.lhTag2)}</div>` : '';
+    const notesHTML = d.notes ? `
+      <div class="ps-notes" style="border-left-color:${d.accentColor}">
+        <div class="ps-notes-label" style="color:${d.accentColor}">Terms &amp; Notes</div>
+        <div class="ps-notes-text">${esc(d.notes)}</div>
+      </div>` : '<div style="flex:1"></div>';
 
     document.getElementById('printSheet').innerHTML = `
-      <div class="ps-letterhead">
-        <div class="ps-lh-name" style="color:${d.nameColor}">${esc(d.lhCompany)}</div>
-        ${d.lhTag1 ? `<div class="ps-lh-tag">${esc(d.lhTag1)}</div>` : ''}
-        ${tag2HTML}
-        ${addrParts.length ? `<div class="ps-lh-addr">${esc(addrParts.join('  |  '))}</div>` : ''}
-        <div class="ps-lh-divider" style="background:${d.accentColor}"></div>
-      </div>
+      <div style="background:#fff;color:#111;font-family:'Segoe UI',Arial,sans-serif;font-size:11px">
 
-      <div class="ps-meta">
-        <div class="ps-meta-left">
-          <strong>To:</strong> ${esc(d.customer)}<br/>
-          <span style="font-size:9px;color:#666">${esc(d.address)}</span>
+        <div class="ps-letterhead" style="border-bottom-color:${d.accentColor}">
+          <div class="ps-lh-name" style="color:${d.nameColor}">${esc(d.lhCompany)}</div>
+          ${d.lhTag1 ? `<div class="ps-lh-tag">${esc(d.lhTag1)}</div>` : ''}
+          ${d.lhTag2 ? `<div class="ps-lh-tag">${esc(d.lhTag2)}</div>` : ''}
+          ${ap.length ? `<div class="ps-lh-addr">${esc(ap.join('  |  '))}</div>` : ''}
         </div>
-        <div class="ps-meta-right">
-          <div class="ps-qt-label" style="color:${d.nameColor}">QUOTATION</div>
-          <div class="ps-qt-val">No: ${esc(d.quoteNo)}</div>
-          <div class="ps-qt-val">Date: ${esc(d.date)}</div>
-        </div>
-      </div>
 
-      <table class="ps-table">
-        <thead>
-          <tr style="background:${d.nameColor}">
-            <th style="color:#fff;width:36px;text-align:center">Sl No</th>
-            <th style="color:#fff">Item Description</th>
-            <th class="r" style="color:#fff;width:50px">Qty</th>
-            <th class="r" style="color:#fff;width:90px">Unit Price</th>
-            <th class="r" style="color:#fff;width:90px">Final Price</th>
-          </tr>
-        </thead>
-        <tbody>${itemRows}</tbody>
-      </table>
-
-      <div class="ps-totals">
-        <div class="ps-totals-inner">
-          <div class="ps-tot-row"><span>Subtotal</span><span>&#8377; ${d.sub.toFixed(2)}</span></div>
-          ${gstRowHTML}
-          <div class="ps-tot-row grand" style="background:${d.nameColor};color:#fff">
-            <span>Grand Total</span>
-            <span style="color:#fff;font-family:monospace">&#8377; ${d.grand.toFixed(2)}</span>
+        <div class="ps-meta">
+          <div class="ps-meta-left">
+            <strong>To:</strong> ${esc(d.customer)}<br/>
+            <span style="font-size:9px;color:#666">${esc(d.address)}</span>
+          </div>
+          <div class="ps-meta-right">
+            <div class="ps-qt-label" style="color:${d.nameColor}">QUOTATION</div>
+            <div class="ps-qt-val">No: ${esc(d.quoteNo)}</div>
+            <div class="ps-qt-val">Date: ${esc(d.date)}</div>
           </div>
         </div>
-      </div>
 
-      ${notesHTML}
+        <table class="ps-table">
+          <thead>
+            <tr style="background:${d.nameColor}">
+              <th style="color:#fff;width:36px;text-align:center">SL NO</th>
+              <th style="color:#fff">ITEM DESCRIPTION</th>
+              <th class="r" style="color:#fff;width:50px">QTY</th>
+              <th class="r" style="color:#fff;width:90px">UNIT PRICE</th>
+              <th class="r" style="color:#fff;width:90px">FINAL PRICE</th>
+            </tr>
+          </thead>
+          <tbody>${itemRows}</tbody>
+        </table>
 
-      <div class="ps-sign-row">
-        <div class="ps-sign">Authorised Signatory<br/>${esc(d.lhCompany)}</div>
-      </div>
+        <div class="ps-totals">
+          <div class="ps-totals-inner">
+            <div class="ps-tot-row"><span>Subtotal</span><span>&#8377; ${d.sub.toFixed(2)}</span></div>
+            ${gstRowHTML}
+            <div class="ps-tot-row grand" style="background:${d.nameColor}">
+              <span>Grand Total</span>
+              <span style="font-family:monospace">&#8377; ${d.grand.toFixed(2)}</span>
+            </div>
+          </div>
+        </div>
 
-      <div class="ps-footer">
-        <span>Computer-generated quotation. Valid for 30 days from date of issue.</span>
-        <span>${esc(d.lhCompany)}</span>
+        <div class="ps-bottom">
+          ${bankHTML}
+          ${notesHTML}
+        </div>
+
+        <div class="ps-sign-row">
+          <div class="ps-sign">Authorised Signatory<br/>${esc(d.lhCompany)}</div>
+        </div>
+
+        <div class="ps-footer">
+          <span>Computer-generated quotation. Valid for 30 days from date of issue.</span>
+          <span>${esc(d.lhCompany)}</span>
+        </div>
       </div>`;
 
     setTimeout(() => {
       window.print();
-      setTimeout(() => { document.getElementById('printSheet').innerHTML = ''; }, 1400);
+      setTimeout(() => { document.getElementById('printSheet').innerHTML = ''; }, 1500);
     }, 160);
   }
 
