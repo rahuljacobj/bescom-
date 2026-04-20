@@ -6,342 +6,229 @@
 <meta name="color-scheme" content="light only"/>
 <title>BESCOM Quotation Builder — JC. Enterprises</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
-  /* Force light mode regardless of device/OS setting */
-  :root, html, body {
-    color-scheme: light only !important;
-    forced-color-adjust: none !important;
+:root, html, body {
+  color-scheme: light only !important;
+  forced-color-adjust: none !important;
+}
+:root {
+  --bg: #f4f6fa;
+  --surface: #ffffff;
+  --surface2: #f0f2f8;
+  --border: #dde2ef;
+  --border2: #c8d0e7;
+  --accent: #cc0000;
+  --accent-dim: rgba(204,0,0,.07);
+  --accent-glow: rgba(204,0,0,.18);
+  --text: #1a1d2e;
+  --text-dim: #4a5070;
+  --text-muted: #8a92b0;
+  --green: #16a34a;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'Inter', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; -webkit-text-size-adjust: 100%; }
+
+/* HEADER */
+.app-header {
+  background: #fff; border-bottom: 2px solid var(--accent);
+  padding: 0 28px; display: flex; align-items: center; justify-content: space-between;
+  height: 56px; position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+.app-logo { font-size: 17px; font-weight: 700; color: var(--accent); display: flex; align-items: center; gap: 8px; }
+.header-tag {
+  font-family: var(--mono); font-size: 10px; color: var(--text-muted);
+  letter-spacing: .1em; text-transform: uppercase;
+  border: 1px solid var(--border); padding: 3px 8px; border-radius: 3px; background: var(--surface2);
+}
+
+.main { max-width: 960px; margin: 0 auto; padding: 28px 18px 80px; }
+
+.section-label {
+  font-family: var(--mono); font-size: 9px; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+}
+.section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.card {
+  background: #fff; border: 1px solid var(--border); border-radius: 10px;
+  padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.05);
+}
+
+/* COLLAPSIBLE */
+.card-toggle-header { display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; }
+.chev { color: var(--text-muted); transition: transform .25s, color .2s; }
+.chev.open { transform: rotate(180deg); color: var(--accent); }
+.card-body { overflow: hidden; max-height: 0; transition: max-height .35s ease; }
+.card-body.open { max-height: 1400px; }
+.card-body-inner { padding-top: 18px; }
+
+/* PREVIEW */
+.preview-label { font-family: var(--mono); font-size: 8px; letter-spacing: .1em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; }
+.lh-preview {
+  background: #fff; border: 1px solid #dde; border-radius: 6px;
+  padding: 14px 18px; text-align: center; font-family: Arial, sans-serif;
+  margin-bottom: 18px; box-shadow: 0 1px 4px rgba(0,0,0,.06);
+}
+.lh-preview-name { font-size: 19px; font-weight: 900; letter-spacing: .04em; margin-bottom: 3px; }
+.lh-preview-tag { font-size: 9px; color: #333; line-height: 1.6; }
+.lh-preview-addr { font-size: 8.5px; color: #555; line-height: 1.6; margin-top: 3px; }
+
+/* FIELDS */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+.grid2 .full { grid-column: 1 / -1; }
+.fg { display: flex; flex-direction: column; gap: 5px; }
+.fl { font-family: var(--mono); font-size: 9px; letter-spacing: .13em; text-transform: uppercase; color: var(--text-muted); font-weight: 500; }
+.fi {
+  background: #fff; border: 1px solid var(--border); border-radius: 6px;
+  padding: 9px 12px; color: var(--text); font-family: var(--sans); font-size: 13.5px;
+  outline: none; width: 100%; transition: border-color .2s, box-shadow .2s;
+}
+.fi:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+.fi::placeholder { color: var(--text-muted); }
+.fi.sm { font-size: 13px; padding: 8px 11px; }
+
+/* COLOR */
+.color-row { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+.cp-wrap { position: relative; width: 34px; height: 34px; flex-shrink: 0; }
+.cp-wrap input[type=color] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; border: none; }
+.cp-vis { width: 34px; height: 34px; border-radius: 6px; border: 2px solid var(--border); pointer-events: none; }
+.preset { width: 21px; height: 21px; border-radius: 4px; border: 2px solid rgba(0,0,0,.12); cursor: pointer; transition: transform .15s; }
+.preset:hover { transform: scale(1.2); }
+
+/* TABLE */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead tr { border-bottom: 2px solid var(--border2); background: var(--surface2); }
+th { font-family: var(--mono); font-size: 9px; letter-spacing: .13em; text-transform: uppercase; color: var(--text-muted); font-weight: 600; text-align: left; padding: 9px 10px; }
+th.r { text-align: right; } th.c { text-align: center; }
+tbody tr { border-bottom: 1px solid var(--border); transition: background .12s; }
+tbody tr:hover { background: var(--accent-dim); }
+td { padding: 4px 4px; vertical-align: middle; }
+
+.slbadge { font-family: var(--mono); font-size: 11px; color: var(--text-muted); text-align: center; width: 36px; display: block; }
+.tdi {
+  background: transparent; border: 1px solid transparent; border-radius: 5px;
+  padding: 7px 8px; color: var(--text); font-family: var(--sans); font-size: 13px;
+  outline: none; width: 100%; transition: border-color .15s, background .15s;
+}
+.tdi:focus { border-color: var(--accent); background: var(--accent-dim); }
+.tdi.mn { font-family: var(--mono); text-align: right; }
+.tdi::placeholder { color: var(--text-muted); }
+.fp { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--accent); text-align: right; padding-right: 10px; }
+.delbtn { background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 6px; border-radius: 4px; display: flex; align-items: center; transition: color .15s, background .15s; }
+.delbtn:hover { color: #dc2626; background: rgba(220,38,38,.08); }
+
+.addbtn {
+  display: flex; align-items: center; gap: 8px; background: none;
+  border: 1px dashed var(--border2); color: var(--text-dim);
+  font-family: var(--sans); font-size: 13px; padding: 10px 16px;
+  border-radius: 6px; cursor: pointer; margin-top: 10px;
+  transition: all .2s; width: 100%; justify-content: center;
+}
+.addbtn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+
+/* TOTALS */
+.tot-area { display: flex; justify-content: flex-end; margin-top: 16px; }
+.tot-box { background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; padding: 13px 20px; min-width: 270px; }
+.tot-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-size: 13px; color: var(--text-dim); }
+.tot-row.sub { border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 6px; }
+.tot-row.grand { padding-top: 8px; font-size: 16px; font-weight: 700; color: var(--text); }
+.tv { font-family: var(--mono); font-weight: 700; color: var(--accent); }
+.tot-row.grand .tv { font-size: 18px; }
+
+.gst-row { display: flex; align-items: center; justify-content: space-between; padding: 4px 0; font-size: 13px; color: var(--text-dim); }
+.gst-ctrl { display: flex; align-items: center; gap: 8px; }
+.gst-num { background: #fff; border: 1px solid var(--border); border-radius: 4px; padding: 3px 6px; color: var(--accent); font-family: var(--mono); font-size: 12px; width: 48px; text-align: center; outline: none; }
+.tog { position: relative; width: 34px; height: 18px; cursor: pointer; }
+.tog input { opacity: 0; width: 0; height: 0; }
+.tog-track { position: absolute; inset: 0; background: var(--border2); border-radius: 99px; transition: background .2s; }
+.tog input:checked ~ .tog-track { background: var(--accent); }
+.tog-thumb { position: absolute; width: 12px; height: 12px; background: #fff; border-radius: 50%; top: 3px; left: 3px; transition: transform .2s; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+.tog input:checked ~ .tog-thumb { transform: translateX(16px); }
+
+.notes-ta { background: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; color: var(--text); font-family: var(--sans); font-size: 13px; outline: none; width: 100%; resize: vertical; min-height: 68px; transition: border-color .2s; }
+.notes-ta:focus { border-color: var(--accent); }
+.notes-ta::placeholder { color: var(--text-muted); }
+
+/* BUTTONS */
+.bar { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 22px; border-radius: 7px; font-family: var(--sans); font-size: 14px; font-weight: 600; cursor: pointer; transition: all .2s; border: none; }
+.btn-p { background: var(--accent); color: #fff; }
+.btn-p:hover { background: #aa0000; box-shadow: 0 4px 16px rgba(204,0,0,.3); transform: translateY(-1px); }
+.btn-s { background: #fff; color: var(--text); border: 1px solid var(--border2); }
+.btn-s:hover { border-color: var(--accent); color: var(--accent); }
+
+.badge { background: var(--accent); color: #fff; font-family: var(--mono); font-size: 8px; font-weight: 700; padding: 2px 6px; border-radius: 3px; margin-left: 6px; }
+
+.toast { position: fixed; bottom: 22px; right: 22px; background: #fff; border: 1px solid var(--green); color: var(--green); font-family: var(--mono); font-size: 12px; padding: 9px 16px; border-radius: 7px; opacity: 0; transform: translateY(10px); transition: all .3s; z-index: 999; pointer-events: none; box-shadow: 0 4px 12px rgba(0,0,0,.1); }
+.toast.show { opacity: 1; transform: translateY(0); }
+
+@media(max-width:600px) {
+  .grid2 { grid-template-columns: 1fr; }
+  .grid2 .full { grid-column: 1; }
+  .bar { flex-direction: column; }
+  .btn { justify-content: center; }
+}
+
+/* ═══════════ PRINT SHEET (hidden on screen) ═══════════ */
+#printSheet { display: none; }
+
+@media print {
+  @page { margin: 10mm 12mm; size: A4; }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-scheme: light only !important; }
+  body > *:not(#printSheet) { display: none !important; }
+  #printSheet {
+    display: block !important;
+    background: #ffffff !important;
+    color: #111111 !important;
+    font-family: 'Segoe UI', Arial, sans-serif !important;
+    font-size: 11px;
   }
 
-  :root {
-    --bg:       #f4f6fa;
-    --surface:  #ffffff;
-    --surface2: #f0f2f8;
-    --border:   #dde2ef;
-    --border2:  #c8d0e7;
-    --accent:   #cc0000;
-    --accent-dim: rgba(204,0,0,.07);
-    --accent-glow: rgba(204,0,0,.18);
-    --text:     #1a1d2e;
-    --text-dim: #4a5070;
-    --text-muted: #8a92b0;
-    --green:    #16a34a;
-    --mono: 'IBM Plex Mono', monospace;
-    --sans: 'Inter', sans-serif;
-  }
+  .plh { text-align: center; padding: 8px 0 10px; margin-bottom: 10px; border-bottom-width: 3px; border-bottom-style: solid; }
+  .plh-name { font-size: 22px; font-weight: 900; letter-spacing: .05em; margin-bottom: 4px; }
+  .plh-tag { font-size: 9.5px; color: #333 !important; line-height: 1.65; }
+  .plh-addr { font-size: 9px; color: #444 !important; line-height: 1.6; margin-top: 3px; }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  .pmeta { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+  .pmeta-l { font-size: 9.5px; color: #333 !important; line-height: 1.7; }
+  .pmeta-r { text-align: right; }
+  .pqt-lbl { font-size: 14px; font-weight: 800; letter-spacing: .04em; }
+  .pqt-val { font-size: 9.5px; color: #555 !important; margin-top: 2px; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--sans);
-    min-height: 100vh;
-    -webkit-text-size-adjust: 100%;
-  }
+  .ptable { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+  .ptable th { font-size: 8px; text-transform: uppercase; letter-spacing: .1em; padding: 6px 8px; text-align: left; color: #ffffff !important; }
+  .ptable th.r { text-align: right; }
+  .ptable td { padding: 6px 8px; border-bottom: 1px solid #ddddee; font-size: 10px; color: #111111 !important; background: #ffffff !important; }
+  .ptable td.r { text-align: right; font-family: 'Courier New', monospace; }
+  .ptable td.pfp { text-align: right; font-family: 'Courier New', monospace; font-weight: 700; }
+  .ptable tr:nth-child(even) td { background: #f7f8ff !important; }
 
-  /* ── APP HEADER ── */
-  .app-header {
-    background: #fff;
-    border-bottom: 2px solid var(--accent);
-    padding: 0 32px;
-    display: flex; align-items: center; justify-content: space-between;
-    height: 58px;
-    position: sticky; top: 0; z-index: 100;
-    box-shadow: 0 2px 8px rgba(0,0,0,.06);
-  }
-  .app-logo {
-    font-size: 18px; font-weight: 700; color: var(--accent);
-    display: flex; align-items: center; gap: 10px; letter-spacing: .02em;
-  }
-  .header-tag {
-    font-family: var(--mono); font-size: 10px; color: var(--text-muted);
-    letter-spacing: .12em; text-transform: uppercase;
-    border: 1px solid var(--border); padding: 3px 8px; border-radius: 3px;
-    background: var(--surface2);
-  }
+  .ptots { display: flex; justify-content: flex-end; margin-bottom: 10px; }
+  .ptots-inner { min-width: 220px; border: 1px solid #ddddee; border-radius: 4px; overflow: hidden; }
+  .ptot-row { display: flex; justify-content: space-between; padding: 5px 10px; font-size: 10px; color: #333333 !important; border-bottom: 1px solid #eeeeee; background: #ffffff !important; }
+  .ptot-row.grand { font-weight: 700; font-size: 13px; border-bottom: none; color: #ffffff !important; }
+  .ptot-row.grand span { color: #ffffff !important; }
 
-  .main { max-width: 960px; margin: 0 auto; padding: 32px 20px 80px; }
+  .pbottom { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; gap: 12px; }
+  .pbank { border: 1px solid #ddddee; border-radius: 4px; padding: 8px 12px; min-width: 180px; background: #f9f9ff !important; }
+  .pbank-lbl { font-size: 7px; text-transform: uppercase; letter-spacing: .12em; font-weight: 700; color: #555555 !important; margin-bottom: 5px; }
+  .pbank-row { font-size: 9.5px; color: #111111 !important; display: flex; gap: 6px; margin-bottom: 3px; }
+  .pbank-key { font-weight: 600; min-width: 72px; color: #333333 !important; font-size: 9px; }
+  .pbank-val { font-family: 'Courier New', monospace; color: #111111 !important; font-size: 9.5px; }
 
-  /* ── SECTION LABEL ── */
-  .section-label {
-    font-family: var(--mono); font-size: 9px; letter-spacing: .18em;
-    text-transform: uppercase; color: var(--text-muted);
-    margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
-  }
-  .section-label::after { content:''; flex:1; height:1px; background: var(--border); }
+  .pnotes { flex: 1; border-left-width: 3px; border-left-style: solid; border-radius: 3px; padding: 8px 12px; background: #fffbeb !important; }
+  .pnotes-lbl { font-size: 7px; text-transform: uppercase; letter-spacing: .1em; font-weight: 700; margin-bottom: 4px; }
+  .pnotes-txt { font-size: 9px; color: #555555 !important; line-height: 1.5; white-space: pre-wrap; }
 
-  /* ── CARD ── */
-  .card {
-    background: #fff; border: 1px solid var(--border);
-    border-radius: 10px; padding: 22px; margin-bottom: 22px;
-    box-shadow: 0 1px 4px rgba(0,0,0,.05);
-  }
-
-  /* ── COLLAPSIBLE ── */
-  .card-toggle-header {
-    display: flex; align-items: center; justify-content: space-between;
-    cursor: pointer; user-select: none;
-  }
-  .toggle-chevron { color: var(--text-muted); transition: transform .25s, color .2s; }
-  .toggle-chevron.open { transform: rotate(180deg); color: var(--accent); }
-  .card-body { overflow: hidden; max-height: 0; transition: max-height .35s ease; }
-  .card-body.open { max-height: 1200px; }
-  .card-body-inner { padding-top: 20px; }
-
-  /* ── LIVE PREVIEW ── */
-  .lh-preview-label {
-    font-family: var(--mono); font-size: 8px; letter-spacing: .1em;
-    color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;
-  }
-  .lh-preview {
-    background: #fff; border: 1px solid #dde; border-radius: 6px;
-    padding: 16px 20px; text-align: center;
-    font-family: Arial, sans-serif; margin-bottom: 20px;
-    box-shadow: 0 1px 4px rgba(0,0,0,.06);
-  }
-  .lh-preview-name { font-size: 20px; font-weight: 900; color: #cc0000; letter-spacing: .04em; margin-bottom: 3px; }
-  .lh-preview-tag  { font-size: 9.5px; color: #333; line-height: 1.65; }
-  .lh-preview-addr { font-size: 9px; color: #555; line-height: 1.6; margin-top: 3px; }
-
-  /* ── FIELDS ── */
-  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .info-grid .full { grid-column: 1/-1; }
-  .field-group { display: flex; flex-direction: column; gap: 5px; }
-  .field-label {
-    font-family: var(--mono); font-size: 9px; letter-spacing: .14em;
-    text-transform: uppercase; color: var(--text-muted); font-weight: 500;
-  }
-  .field-input {
-    background: #fff; border: 1px solid var(--border); border-radius: 6px;
-    padding: 9px 13px; color: var(--text); font-family: var(--sans); font-size: 13.5px;
-    outline: none; transition: border-color .2s, box-shadow .2s; width: 100%;
-  }
-  .field-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
-  .field-input::placeholder { color: var(--text-muted); }
-  .field-input.sm { font-size: 13px; padding: 8px 12px; }
-
-  /* ── COLOR PICKERS ── */
-  .color-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-  .color-picker-wrap { position: relative; width: 36px; height: 36px; flex-shrink: 0; }
-  .color-picker-wrap input[type=color] {
-    position: absolute; inset: 0; width: 100%; height: 100%;
-    opacity: 0; cursor: pointer; border: none; padding: 0;
-  }
-  .color-vis { width: 36px; height: 36px; border-radius: 6px; border: 2px solid var(--border); pointer-events: none; }
-  .preset-btn {
-    width: 22px; height: 22px; border-radius: 4px;
-    border: 2px solid rgba(0,0,0,.12); cursor: pointer;
-    transition: transform .15s, border-color .15s; flex-shrink: 0;
-  }
-  .preset-btn:hover { transform: scale(1.2); border-color: #333; }
-
-  /* ── ITEMS TABLE ── */
-  .table-wrapper { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  thead tr { border-bottom: 2px solid var(--border2); background: var(--surface2); }
-  th {
-    font-family: var(--mono); font-size: 9px; letter-spacing: .14em;
-    text-transform: uppercase; color: var(--text-muted); font-weight: 600;
-    text-align: left; padding: 9px 10px 9px;
-  }
-  th.num { text-align: right; } th.center { text-align: center; }
-  tbody tr { border-bottom: 1px solid var(--border); transition: background .12s; }
-  tbody tr:hover { background: var(--accent-dim); }
-  td { padding: 5px 4px; vertical-align: middle; }
-
-  .sl-badge {
-    font-family: var(--mono); font-size: 11px; color: var(--text-muted);
-    text-align: center; width: 36px; display: block;
-  }
-  .td-input {
-    background: transparent; border: 1px solid transparent; border-radius: 5px;
-    padding: 7px 8px; color: var(--text); font-family: var(--sans); font-size: 13px;
-    outline: none; width: 100%; transition: border-color .15s, background .15s;
-  }
-  .td-input:focus { border-color: var(--accent); background: var(--accent-dim); }
-  .td-input.mono { font-family: var(--mono); text-align: right; }
-  .td-input::placeholder { color: var(--text-muted); }
-  .final-price { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--accent); text-align: right; padding-right: 10px; }
-  .delete-btn {
-    background: none; border: none; cursor: pointer; color: var(--text-muted);
-    padding: 6px; border-radius: 4px; display: flex; align-items: center;
-    transition: color .15s, background .15s;
-  }
-  .delete-btn:hover { color: #dc2626; background: rgba(220,38,38,.08); }
-
-  .add-row-btn {
-    display: flex; align-items: center; gap: 8px; background: none;
-    border: 1px dashed var(--border2); color: var(--text-dim); font-family: var(--sans);
-    font-size: 13px; padding: 10px 16px; border-radius: 6px; cursor: pointer;
-    margin-top: 12px; transition: all .2s; width: 100%; justify-content: center;
-  }
-  .add-row-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
-
-  /* ── TOTALS ── */
-  .totals-area { display: flex; justify-content: flex-end; margin-top: 18px; }
-  .totals-box {
-    background: var(--surface2); border: 1px solid var(--border2);
-    border-radius: 8px; padding: 14px 22px; min-width: 280px;
-  }
-  .total-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-size: 13px; color: var(--text-dim); }
-  .total-row.subtotal { border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 6px; }
-  .total-row.grand { padding-top: 8px; font-size: 17px; font-weight: 700; color: var(--text); }
-  .total-value { font-family: var(--mono); font-weight: 700; color: var(--accent); }
-  .total-row.grand .total-value { font-size: 19px; }
-
-  .gst-row { display: flex; align-items: center; justify-content: space-between; padding: 4px 0; font-size: 13px; color: var(--text-dim); }
-  .gst-controls { display: flex; align-items: center; gap: 8px; }
-  .gst-input-small {
-    background: #fff; border: 1px solid var(--border); border-radius: 4px;
-    padding: 3px 6px; color: var(--accent); font-family: var(--mono);
-    font-size: 12px; width: 50px; text-align: center; outline: none;
-  }
-  .toggle { position: relative; width: 34px; height: 18px; cursor: pointer; }
-  .toggle input { opacity: 0; width: 0; height: 0; }
-  .toggle-track { position: absolute; inset: 0; background: var(--border2); border-radius: 99px; transition: background .2s; }
-  .toggle input:checked ~ .toggle-track { background: var(--accent); }
-  .toggle-thumb { position: absolute; width: 12px; height: 12px; background: white; border-radius: 50%; top: 3px; left: 3px; transition: transform .2s; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
-  .toggle input:checked ~ .toggle-thumb { transform: translateX(16px); }
-
-  .notes-input {
-    background: #fff; border: 1px solid var(--border); border-radius: 6px;
-    padding: 11px 13px; color: var(--text); font-family: var(--sans);
-    font-size: 13px; outline: none; width: 100%; resize: vertical;
-    min-height: 72px; transition: border-color .2s;
-  }
-  .notes-input:focus { border-color: var(--accent); }
-  .notes-input::placeholder { color: var(--text-muted); }
-
-  /* ── BUTTONS ── */
-  .actions-bar { display: flex; gap: 12px; flex-wrap: wrap; }
-  .btn {
-    display: inline-flex; align-items: center; gap: 8px; padding: 11px 22px;
-    border-radius: 7px; font-family: var(--sans); font-size: 14px; font-weight: 600;
-    cursor: pointer; transition: all .2s; border: none;
-  }
-  .btn-primary { background: var(--accent); color: #fff; }
-  .btn-primary:hover { background: #aa0000; box-shadow: 0 4px 16px rgba(204,0,0,.3); transform: translateY(-1px); }
-  .btn-secondary { background: #fff; color: var(--text); border: 1px solid var(--border2); }
-  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
-
-  .toast {
-    position: fixed; bottom: 24px; right: 24px; background: #fff;
-    border: 1px solid var(--green); color: var(--green);
-    font-family: var(--mono); font-size: 12px; padding: 10px 18px;
-    border-radius: 7px; opacity: 0; transform: translateY(10px);
-    transition: all .3s; z-index: 999; pointer-events: none;
-    box-shadow: 0 4px 12px rgba(0,0,0,.1);
-  }
-  .toast.show { opacity: 1; transform: translateY(0); }
-
-  .badge-new {
-    background: var(--accent); color: #fff; font-family: var(--mono);
-    font-size: 8px; font-weight: 700; padding: 2px 6px;
-    border-radius: 3px; letter-spacing: .06em; margin-left: 6px;
-  }
-
-  @media(max-width:600px){
-    .info-grid { grid-template-columns: 1fr; }
-    .info-grid .full { grid-column: 1; }
-    .actions-bar { flex-direction: column; }
-    .btn { justify-content: center; }
-  }
-
-  /* ══════════════════════════════════════
-     PRINT / PDF — forced white, no dark
-  ══════════════════════════════════════ */
-  #printSheet { display: none; }
-
-  @media print {
-    @page { margin: 10mm 12mm; size: A4; }
-
-    * { color-scheme: light only !important; }
-    body > *:not(#printSheet) { display: none !important; }
-
-    #printSheet {
-      display: block !important;
-      font-family: 'Segoe UI', Arial, sans-serif;
-      color: #111 !important;
-      background: #fff !important;
-      font-size: 11px;
-      -webkit-print-color-adjust: exact !important;
-      print-color-adjust: exact !important;
-    }
-
-    /* letterhead */
-    .ps-letterhead {
-      text-align: center; padding: 8px 0 10px;
-      border-bottom-width: 3px; border-bottom-style: solid;
-      margin-bottom: 10px;
-    }
-    .ps-lh-name { font-size: 22px; font-weight: 900; letter-spacing: .05em; margin-bottom: 4px; }
-    .ps-lh-tag  { font-size: 9.5px; color: #333 !important; line-height: 1.65; }
-    .ps-lh-addr { font-size: 9px; color: #444 !important; line-height: 1.6; margin-top: 3px; }
-
-    /* meta */
-    .ps-meta { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; padding: 0 2px; }
-    .ps-meta-left { font-size: 9.5px; color: #333 !important; line-height: 1.7; }
-    .ps-meta-right { text-align: right; }
-    .ps-qt-label { font-size: 14px; font-weight: 800; letter-spacing: .04em; }
-    .ps-qt-val   { font-size: 9.5px; color: #555 !important; margin-top: 2px; }
-
-    /* items table */
-    .ps-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
-    .ps-table th {
-      font-size: 8px; text-transform: uppercase; letter-spacing: .1em;
-      padding: 6px 8px; text-align: left; color: #fff !important;
-      -webkit-print-color-adjust: exact; print-color-adjust: exact;
-    }
-    .ps-table th.r { text-align: right; }
-    .ps-table td { padding: 6px 8px; border-bottom: 1px solid #dde; font-size: 10px; color: #111 !important; background: #fff !important; }
-    .ps-table td.r { text-align: right; font-family: monospace; }
-    .ps-table td.fp { text-align: right; font-family: monospace; font-weight: 700; }
-    .ps-table tr:nth-child(even) td { background: #f7f8ff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-
-    /* totals */
-    .ps-totals { display: flex; justify-content: flex-end; margin-bottom: 10px; }
-    .ps-totals-inner { min-width: 220px; border: 1px solid #dde; border-radius: 4px; overflow: hidden; }
-    .ps-tot-row { display: flex; justify-content: space-between; padding: 5px 10px; font-size: 10px; color: #333 !important; border-bottom: 1px solid #eee; background: #fff !important; }
-    .ps-tot-row.grand {
-      font-weight: 700; font-size: 13px; border-bottom: none;
-      color: #fff !important;
-      -webkit-print-color-adjust: exact; print-color-adjust: exact;
-    }
-    .ps-tot-row.grand span { color: #fff !important; }
-
-    /* bank + notes bottom section */
-    .ps-bottom {
-      display: flex; align-items: flex-start; justify-content: space-between;
-      margin-bottom: 10px; gap: 12px;
-    }
-    .ps-bank {
-      border: 1px solid #dde; border-radius: 4px; padding: 8px 12px;
-      min-width: 200px; background: #f9f9ff !important;
-      -webkit-print-color-adjust: exact; print-color-adjust: exact;
-    }
-    .ps-bank-label { font-size: 7px; text-transform: uppercase; letter-spacing: .12em; font-weight: 700; color: #555 !important; margin-bottom: 5px; }
-    .ps-bank-row   { font-size: 9.5px; color: #111 !important; display: flex; gap: 6px; margin-bottom: 3px; }
-    .ps-bank-key   { font-weight: 600; min-width: 70px; color: #333 !important; }
-    .ps-bank-val   { font-family: monospace; color: #111 !important; font-size: 9.5px; }
-
-    .ps-notes {
-      flex: 1; border-left-width: 3px; border-left-style: solid;
-      border-radius: 3px; padding: 8px 12px;
-      background: #fffbeb !important;
-      -webkit-print-color-adjust: exact; print-color-adjust: exact;
-    }
-    .ps-notes-label { font-size: 7px; text-transform: uppercase; letter-spacing: .1em; font-weight: 700; margin-bottom: 4px; color: #92400e !important; }
-    .ps-notes-text  { font-size: 9px; color: #555 !important; line-height: 1.5; white-space: pre-wrap; }
-
-    /* sign */
-    .ps-sign-row { display: flex; justify-content: flex-end; margin-bottom: 8px; }
-    .ps-sign { border-top: 1px solid #888; width: 140px; padding-top: 5px; font-size: 8px; color: #555 !important; text-align: center; margin-top: 24px; }
-
-    /* footer */
-    .ps-footer { border-top: 1px solid #ccc; padding-top: 5px; display: flex; justify-content: space-between; font-size: 7.5px; color: #999 !important; }
-  }
+  .psign-row { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+  .psign { border-top: 1px solid #888888; width: 140px; padding-top: 5px; font-size: 8px; color: #555555 !important; text-align: center; margin-top: 24px; }
+  .pfooter { border-top: 1px solid #cccccc; padding-top: 5px; display: flex; justify-content: space-between; font-size: 7.5px; color: #999999 !important; }
+}
 </style>
 </head>
 <body>
@@ -356,104 +243,76 @@
 
 <div class="main">
 
-  <!-- ═══ LETTERHEAD PANEL ═══ -->
-  <div class="section-label">
-    Letterhead / Branding
-    <span class="badge-new">CUSTOM</span>
-  </div>
+  <!-- LETTERHEAD -->
+  <div class="section-label">Letterhead / Branding <span class="badge">CUSTOM</span></div>
   <div class="card">
     <div class="card-toggle-header" onclick="toggleLH()">
       <div style="display:flex;align-items:center;gap:10px">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
-        <span style="font-size:14px;font-weight:600;color:var(--text)">Customise Your Letterhead</span>
+        <span style="font-size:14px;font-weight:600">Customise Your Letterhead</span>
         <span style="font-family:var(--mono);font-size:10px;color:var(--text-muted)">— click to expand</span>
       </div>
-      <svg class="toggle-chevron" id="lhChevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      <svg class="chev" id="lhChev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
-
     <div class="card-body" id="lhBody">
       <div class="card-body-inner">
-        <div class="lh-preview-label">Live Preview</div>
-        <div class="lh-preview" id="lhPreview" style="border-bottom:3px solid #cc0000">
-          <div class="lh-preview-name" id="prev-name" style="color:#cc0000">JC. ENTERPRISES</div>
-          <div class="lh-preview-tag" id="prev-tag1">Govt. Approved Class 'A' Electrical Contractors &amp; Engineers</div>
-          <div class="lh-preview-tag" id="prev-tag2">BESCOM Approved Vendor for Rooftop Solar Panels Dealers for TATA, Adani &amp; Goldi | Solar LED Street Lights | All Types of Indoor and Outdoor LED Fixtures</div>
-          <div class="lh-preview-addr" id="prev-addr">Registered Office: 7th Main Rd, Hongasandra, Bengaluru, Karnataka 560114 | Mobile: +91-7760837805 | Mail: johnbenadick322@gmail.com</div>
+        <div class="preview-label">Live Preview</div>
+        <div class="lh-preview" id="lhPrev" style="border-bottom:3px solid #cc0000">
+          <div class="lh-preview-name" id="pName" style="color:#cc0000">JC. ENTERPRISES</div>
+          <div class="lh-preview-tag" id="pTag1">Govt. Approved Class 'A' Electrical Contractors &amp; Engineers</div>
+          <div class="lh-preview-tag" id="pTag2">BESCOM Approved Vendor for Rooftop Solar Panels Dealers for TATA, Adani &amp; Goldi | Solar LED Street Lights | All Types of Indoor and Outdoor LED Fixtures</div>
+          <div class="lh-preview-addr" id="pAddr">Registered Office: 7th Main Rd, Hongasandra, Bengaluru, Karnataka 560114 &nbsp;|&nbsp; Mobile: +91-7760837805 &nbsp;|&nbsp; Mail: johnbenadick322@gmail.com</div>
         </div>
 
-        <div class="info-grid">
-          <div class="field-group full">
-            <label class="field-label">Company Name</label>
-            <input class="field-input" id="lhCompany" value="JC. ENTERPRISES" oninput="updatePreview()"/>
-          </div>
-          <div class="field-group full">
-            <label class="field-label">Tagline / Description Line 1</label>
-            <input class="field-input sm" id="lhTag1" value="Govt. Approved Class 'A' Electrical Contractors &amp; Engineers" oninput="updatePreview()"/>
-          </div>
-          <div class="field-group full">
-            <label class="field-label">Tagline / Description Line 2 <span style="color:var(--text-muted);font-size:8px">(optional)</span></label>
-            <input class="field-input sm" id="lhTag2" value="BESCOM Approved Vendor for Rooftop Solar Panels Dealers for TATA, Adani &amp; Goldi | Solar LED Street Lights | All Types of Indoor and Outdoor LED Fixtures" oninput="updatePreview()"/>
-          </div>
-          <div class="field-group full">
-            <label class="field-label">Registered / Office Address</label>
-            <input class="field-input sm" id="lhAddress" value="7th Main Rd, Hongasandra, Bengaluru, Karnataka 560114" oninput="updatePreview()"/>
-          </div>
-          <div class="field-group">
-            <label class="field-label">Mobile / Phone</label>
-            <input class="field-input sm" id="lhMobile" value="+91-7760837805" oninput="updatePreview()"/>
-          </div>
-          <div class="field-group">
-            <label class="field-label">Email</label>
-            <input class="field-input sm" id="lhEmail" value="johnbenadick322@gmail.com" oninput="updatePreview()"/>
-          </div>
+        <div class="grid2">
+          <div class="fg full"><label class="fl">Company Name</label>
+            <input class="fi" id="lhCompany" value="JC. ENTERPRISES" oninput="updatePrev()"/></div>
+          <div class="fg full"><label class="fl">Tagline Line 1</label>
+            <input class="fi sm" id="lhTag1" value="Govt. Approved Class 'A' Electrical Contractors &amp; Engineers" oninput="updatePrev()"/></div>
+          <div class="fg full"><label class="fl">Tagline Line 2 <span style="color:var(--text-muted);font-size:8px">(optional)</span></label>
+            <input class="fi sm" id="lhTag2" value="BESCOM Approved Vendor for Rooftop Solar Panels Dealers for TATA, Adani &amp; Goldi | Solar LED Street Lights | All Types of Indoor and Outdoor LED Fixtures" oninput="updatePrev()"/></div>
+          <div class="fg full"><label class="fl">Registered / Office Address</label>
+            <input class="fi sm" id="lhAddr" value="7th Main Rd, Hongasandra, Bengaluru, Karnataka 560114" oninput="updatePrev()"/></div>
+          <div class="fg"><label class="fl">Mobile / Phone</label>
+            <input class="fi sm" id="lhMobile" value="+91-7760837805" oninput="updatePrev()"/></div>
+          <div class="fg"><label class="fl">Email</label>
+            <input class="fi sm" id="lhEmail" value="johnbenadick322@gmail.com" oninput="updatePrev()"/></div>
 
-          <!-- BANK DETAILS -->
-          <div class="field-group">
-            <label class="field-label">Bank Account Number</label>
-            <input class="field-input sm" id="bankAccNo" value="09231100000309" placeholder="Account number"/>
-          </div>
-          <div class="field-group">
-            <label class="field-label">IFSC Code</label>
-            <input class="field-input sm" id="bankIfsc" value="PSIB0000923" placeholder="IFSC Code"/>
-          </div>
-          <div class="field-group">
-            <label class="field-label">Bank Name <span style="color:var(--text-muted);font-size:8px">(optional)</span></label>
-            <input class="field-input sm" id="bankName" placeholder="e.g. Punjab & Sind Bank"/>
-          </div>
-          <div class="field-group">
-            <label class="field-label">Account Type <span style="color:var(--text-muted);font-size:8px">(optional)</span></label>
-            <input class="field-input sm" id="bankType" placeholder="e.g. Current / Savings"/>
-          </div>
+          <div class="fg"><label class="fl">Bank Account Number</label>
+            <input class="fi sm" id="bankAcc" value="09231100000309"/></div>
+          <div class="fg"><label class="fl">IFSC Code</label>
+            <input class="fi sm" id="bankIfsc" value="PSIB0000923"/></div>
+          <div class="fg"><label class="fl">Bank Name <span style="color:var(--text-muted);font-size:8px">(optional)</span></label>
+            <input class="fi sm" id="bankName" placeholder="e.g. Punjab &amp; Sind Bank"/></div>
+          <div class="fg"><label class="fl">Account Type <span style="color:var(--text-muted);font-size:8px">(optional)</span></label>
+            <input class="fi sm" id="bankType" placeholder="e.g. Current / Savings"/></div>
 
-          <!-- COLOR PICKERS -->
-          <div class="field-group">
-            <label class="field-label">Company Name Colour</label>
+          <div class="fg">
+            <label class="fl">Company Name Colour</label>
             <div class="color-row">
-              <div class="color-picker-wrap">
-                <div class="color-vis" id="nameColorVis" style="background:#cc0000"></div>
-                <input type="color" id="nameColor" value="#cc0000" oninput="syncColor('nameColor','nameColorVis','nameColorHex');updatePreview()"/>
+              <div class="cp-wrap">
+                <div class="cp-vis" id="ncVis" style="background:#cc0000"></div>
+                <input type="color" id="ncPick" value="#cc0000" oninput="syncC('ncPick','ncVis','ncHex');updatePrev()"/>
               </div>
-              <input class="field-input sm" id="nameColorHex" value="#cc0000" placeholder="#cc0000"
-                oninput="hexInput('nameColor','nameColorVis','nameColorHex');updatePreview()" style="max-width:100px"/>
+              <input class="fi sm" id="ncHex" value="#cc0000" style="max-width:95px" oninput="hexC('ncPick','ncVis','ncHex');updatePrev()"/>
               <div style="display:flex;gap:5px;flex-wrap:wrap">
-                <button class="preset-btn" style="background:#cc0000" onclick="setNameColor('#cc0000')"></button>
-                <button class="preset-btn" style="background:#1a56db" onclick="setNameColor('#1a56db')"></button>
-                <button class="preset-btn" style="background:#047857" onclick="setNameColor('#047857')"></button>
-                <button class="preset-btn" style="background:#111827" onclick="setNameColor('#111827')"></button>
-                <button class="preset-btn" style="background:#7c3aed" onclick="setNameColor('#7c3aed')"></button>
-                <button class="preset-btn" style="background:#b45309" onclick="setNameColor('#b45309')"></button>
+                <button class="preset" style="background:#cc0000" onclick="setNC('#cc0000')"></button>
+                <button class="preset" style="background:#1a56db" onclick="setNC('#1a56db')"></button>
+                <button class="preset" style="background:#047857" onclick="setNC('#047857')"></button>
+                <button class="preset" style="background:#111827" onclick="setNC('#111827')"></button>
+                <button class="preset" style="background:#7c3aed" onclick="setNC('#7c3aed')"></button>
+                <button class="preset" style="background:#b45309" onclick="setNC('#b45309')"></button>
               </div>
             </div>
           </div>
-          <div class="field-group">
-            <label class="field-label">Accent / Divider Colour</label>
+          <div class="fg">
+            <label class="fl">Accent / Divider Colour</label>
             <div class="color-row">
-              <div class="color-picker-wrap">
-                <div class="color-vis" id="accentColorVis" style="background:#cc0000"></div>
-                <input type="color" id="accentColor" value="#cc0000" oninput="syncColor('accentColor','accentColorVis','accentColorHex');updatePreview()"/>
+              <div class="cp-wrap">
+                <div class="cp-vis" id="acVis" style="background:#cc0000"></div>
+                <input type="color" id="acPick" value="#cc0000" oninput="syncC('acPick','acVis','acHex');updatePrev()"/>
               </div>
-              <input class="field-input sm" id="accentColorHex" value="#cc0000" placeholder="#cc0000"
-                oninput="hexInput('accentColor','accentColorVis','accentColorHex');updatePreview()" style="max-width:100px"/>
+              <input class="fi sm" id="acHex" value="#cc0000" style="max-width:95px" oninput="hexC('acPick','acVis','acHex');updatePrev()"/>
             </div>
           </div>
         </div>
@@ -461,385 +320,410 @@
     </div>
   </div>
 
-  <!-- ═══ CUSTOMER / QUOTE DETAILS ═══ -->
+  <!-- CUSTOMER DETAILS -->
   <div class="section-label">Customer &amp; Quotation Details</div>
   <div class="card">
-    <div class="info-grid">
-      <div class="field-group">
-        <label class="field-label">Quotation Number</label>
-        <input class="field-input" id="quoteNo" placeholder="e.g. QT-2026-001"/>
-      </div>
-      <div class="field-group">
-        <label class="field-label">Date</label>
-        <input class="field-input" type="date" id="quoteDate"/>
-      </div>
-      <div class="field-group full">
-        <label class="field-label">Customer / Consumer Name</label>
-        <input class="field-input" id="customerName" placeholder="Consumer or organization name"/>
-      </div>
-      <div class="field-group full">
-        <label class="field-label">Site / Service Address</label>
-        <input class="field-input" id="customerAddress" placeholder="Installation site address"/>
-      </div>
+    <div class="grid2">
+      <div class="fg"><label class="fl">Quotation Number</label>
+        <input class="fi" id="quoteNo" placeholder="e.g. QT-2026-001"/></div>
+      <div class="fg"><label class="fl">Date</label>
+        <input class="fi" type="date" id="quoteDate"/></div>
+      <div class="fg full"><label class="fl">Customer / Consumer Name</label>
+        <input class="fi" id="custName" placeholder="Consumer or organization name"/></div>
+      <div class="fg full"><label class="fl">Site / Service Address</label>
+        <input class="fi" id="custAddr" placeholder="Installation site address"/></div>
     </div>
   </div>
 
-  <!-- ═══ LINE ITEMS ═══ -->
+  <!-- LINE ITEMS -->
   <div class="section-label">Line Items</div>
   <div class="card">
-    <div class="table-wrapper">
+    <div class="table-wrap">
       <table>
         <thead>
           <tr>
-            <th class="center" style="width:44px">Sl No</th>
-            <th style="min-width:180px">Item Description</th>
-            <th class="num" style="width:80px">Qty</th>
-            <th class="num" style="width:115px">Unit Price (₹)</th>
-            <th class="num" style="width:125px">Final Price (₹)</th>
-            <th style="width:38px"></th>
+            <th class="c" style="width:44px">SL No</th>
+            <th style="min-width:170px">Item Description</th>
+            <th style="width:110px">Qty</th>
+            <th class="r" style="width:115px">Unit Price (₹)</th>
+            <th class="r" style="width:120px">Final Price (₹)</th>
+            <th style="width:36px"></th>
           </tr>
         </thead>
-        <tbody id="itemsBody"></tbody>
+        <tbody id="tbody"></tbody>
       </table>
     </div>
-    <button class="add-row-btn" onclick="addRow()">
+    <button class="addbtn" onclick="addRow()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       Add Item
     </button>
-    <div class="totals-area">
-      <div class="totals-box">
-        <div class="total-row subtotal">
-          <span>Subtotal</span>
-          <span class="total-value" id="subtotalDisp">₹0.00</span>
+    <div class="tot-area">
+      <div class="tot-box">
+        <div class="tot-row sub">
+          <span>Subtotal</span><span class="tv" id="tSub">₹0.00</span>
         </div>
         <div class="gst-row">
           <span>GST</span>
-          <div class="gst-controls">
-            <input class="gst-input-small" id="gstRate" type="number" value="18" min="0" max="100" oninput="recalcTotals()"/>
+          <div class="gst-ctrl">
+            <input class="gst-num" id="gstRate" type="number" value="18" min="0" max="100" oninput="calcTotals()"/>
             <span style="font-family:var(--mono);font-size:12px;color:var(--text-muted)">%</span>
-            <label class="toggle">
-              <input type="checkbox" id="gstToggle" checked onchange="recalcTotals()"/>
-              <div class="toggle-track"></div>
-              <div class="toggle-thumb"></div>
+            <label class="tog">
+              <input type="checkbox" id="gstOn" checked onchange="calcTotals()"/>
+              <div class="tog-track"></div>
+              <div class="tog-thumb"></div>
             </label>
           </div>
         </div>
-        <div class="total-row" id="gstRow">
-          <span style="font-family:var(--mono);font-size:11px;color:var(--text-muted)" id="gstLabel">GST @18%</span>
-          <span class="total-value" id="gstDisp">₹0.00</span>
+        <div class="tot-row" id="gstRow">
+          <span style="font-family:var(--mono);font-size:11px;color:var(--text-muted)" id="gstLbl">GST @18%</span>
+          <span class="tv" id="tGst">₹0.00</span>
         </div>
-        <div class="total-row grand">
-          <span>Grand Total</span>
-          <span class="total-value" id="grandDisp">₹0.00</span>
+        <div class="tot-row grand">
+          <span>Grand Total</span><span class="tv" id="tGrand">₹0.00</span>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ═══ NOTES ═══ -->
+  <!-- NOTES -->
   <div class="section-label">Terms &amp; Notes</div>
   <div class="card">
-    <div class="field-group">
-      <label class="field-label">Additional Notes / Terms &amp; Conditions</label>
-      <textarea class="notes-input" id="notes" placeholder="e.g. Payment terms, validity of quotation, warranty details, BESCOM compliance notes..."></textarea>
+    <div class="fg">
+      <label class="fl">Additional Notes / Terms &amp; Conditions</label>
+      <textarea class="notes-ta" id="notes" placeholder="e.g. Payment terms, validity, warranty details, BESCOM compliance notes..."></textarea>
     </div>
   </div>
 
-  <!-- ═══ EXPORT ═══ -->
+  <!-- EXPORT -->
   <div class="section-label">Export</div>
-  <div class="actions-bar">
-    <button class="btn btn-primary" onclick="exportPDF()">
+  <div class="bar">
+    <button class="btn btn-p" onclick="exportPDF()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
       Export as PDF
     </button>
-    <button class="btn btn-secondary" onclick="clearForm()">
+    <button class="btn btn-s" onclick="newQuote()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
       New Quotation
     </button>
   </div>
 </div>
 
-<!-- Print sheet built dynamically -->
 <div id="printSheet"></div>
 <div class="toast" id="toast"></div>
 
 <script>
-  /* ── Letterhead toggle ── */
-  function toggleLH() {
-    document.getElementById('lhBody').classList.toggle('open');
-    document.getElementById('lhChevron').classList.toggle('open');
-  }
+/* ─── Letterhead toggle ─── */
+(function() {
   document.getElementById('lhBody').classList.add('open');
-  document.getElementById('lhChevron').classList.add('open');
+  document.getElementById('lhChev').classList.add('open');
+})();
+function toggleLH() {
+  document.getElementById('lhBody').classList.toggle('open');
+  document.getElementById('lhChev').classList.toggle('open');
+}
 
-  /* ── Colour helpers ── */
-  function syncColor(id, visId, hexId) {
-    const v = document.getElementById(id).value;
+/* ─── Colour helpers ─── */
+function syncC(pickId, visId, hexId) {
+  var v = document.getElementById(pickId).value;
+  document.getElementById(visId).style.background = v;
+  document.getElementById(hexId).value = v;
+}
+function hexC(pickId, visId, hexId) {
+  var v = document.getElementById(hexId).value;
+  if (/^#[0-9a-fA-F]{6}$/.test(v)) {
+    document.getElementById(pickId).value = v;
     document.getElementById(visId).style.background = v;
-    if (hexId) document.getElementById(hexId).value = v;
   }
-  function hexInput(id, visId, hexId) {
-    const v = document.getElementById(hexId).value;
-    if (/^#[0-9a-fA-F]{6}$/.test(v)) {
-      document.getElementById(id).value = v;
-      document.getElementById(visId).style.background = v;
-    }
-  }
-  function setNameColor(hex) {
-    document.getElementById('nameColor').value = hex;
-    document.getElementById('nameColorVis').style.background = hex;
-    document.getElementById('nameColorHex').value = hex;
-    updatePreview();
+}
+function setNC(hex) {
+  document.getElementById('ncPick').value = hex;
+  document.getElementById('ncVis').style.background = hex;
+  document.getElementById('ncHex').value = hex;
+  updatePrev();
+}
+
+/* ─── Live preview ─── */
+function updatePrev() {
+  var company = document.getElementById('lhCompany').value || 'Company Name';
+  var tag1    = document.getElementById('lhTag1').value;
+  var tag2    = document.getElementById('lhTag2').value;
+  var addr    = document.getElementById('lhAddr').value;
+  var mobile  = document.getElementById('lhMobile').value;
+  var email   = document.getElementById('lhEmail').value;
+  var nc      = document.getElementById('ncPick').value;
+  var ac      = document.getElementById('acPick').value;
+
+  document.getElementById('pName').textContent = company;
+  document.getElementById('pName').style.color = nc;
+  document.getElementById('pTag1').textContent = tag1;
+  document.getElementById('pTag2').textContent = tag2;
+
+  var ap = [];
+  if (addr)   ap.push('Registered Office: ' + addr);
+  if (mobile) ap.push('Mobile: ' + mobile);
+  if (email)  ap.push('Mail: ' + email);
+  document.getElementById('pAddr').textContent = ap.join('  |  ');
+  document.getElementById('lhPrev').style.borderBottom = '3px solid ' + ac;
+}
+updatePrev();
+
+/* ─── Qty parser: extracts leading number ─── */
+function parseQty(val) {
+  var m = String(val || '').match(/[\d.]+/);
+  return m ? (parseFloat(m[0]) || 0) : 0;
+}
+
+/* ─── Row management ─── */
+var rows = [];
+var nextId = 1;
+document.getElementById('quoteDate').valueAsDate = new Date();
+
+function addRow(item, qty, price) {
+  item  = item  || '';
+  qty   = qty   || '';
+  price = price || '';
+  var id = nextId++;
+  rows.push(id);
+  var tr = document.createElement('tr');
+  tr.id = 'row-' + id;
+  tr.innerHTML =
+    '<td><span class="slbadge" id="sl-' + id + '"></span></td>' +
+    '<td><input class="tdi" placeholder="Item description" id="item-' + id + '" oninput="calcRow(' + id + ')"/></td>' +
+    '<td><input class="tdi" placeholder="e.g. 2 Nos" id="qty-' + id + '" oninput="calcRow(' + id + ')"/></td>' +
+    '<td><input class="tdi mn" placeholder="0.00" id="price-' + id + '" type="number" min="0" step="0.01" oninput="calcRow(' + id + ')"/></td>' +
+    '<td><div class="fp" id="fp-' + id + '">—</div></td>' +
+    '<td><button class="delbtn" onclick="delRow(' + id + ')">' +
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">' +
+      '<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>' +
+      '<path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>' +
+      '</svg></button></td>';
+  document.getElementById('tbody').appendChild(tr);
+
+  if (item)  document.getElementById('item-' + id).value  = item;
+  if (qty)   document.getElementById('qty-' + id).value   = qty;
+  if (price) document.getElementById('price-' + id).value = price;
+
+  calcRow(id);
+  renumber();
+  if (!item) setTimeout(function() { var el = document.getElementById('item-' + id); if (el) el.focus(); }, 50);
+}
+
+function delRow(id) {
+  rows = rows.filter(function(r) { return r !== id; });
+  var el = document.getElementById('row-' + id);
+  if (el) el.remove();
+  renumber();
+  calcTotals();
+}
+
+function renumber() {
+  rows.forEach(function(id, i) {
+    var el = document.getElementById('sl-' + id);
+    if (el) el.textContent = String(i + 1).padStart(2, '0');
+  });
+}
+
+function calcRow(id) {
+  var qtyEl   = document.getElementById('qty-' + id);
+  var priceEl = document.getElementById('price-' + id);
+  var fpEl    = document.getElementById('fp-' + id);
+  if (!fpEl) return;
+  var q = parseQty(qtyEl ? qtyEl.value : '');
+  var p = parseFloat(priceEl ? priceEl.value : '') || 0;
+  fpEl.textContent = (q > 0 && p > 0) ? '₹' + (q * p).toFixed(2) : '—';
+  calcTotals();
+}
+
+function calcTotals() {
+  var sub = 0;
+  rows.forEach(function(id) {
+    var q = parseQty((document.getElementById('qty-' + id) || {}).value);
+    var p = parseFloat((document.getElementById('price-' + id) || {}).value) || 0;
+    sub += q * p;
+  });
+  var on   = document.getElementById('gstOn').checked;
+  var rate = parseFloat(document.getElementById('gstRate').value) || 0;
+  var gst  = on ? sub * rate / 100 : 0;
+  document.getElementById('tSub').textContent   = '₹' + sub.toFixed(2);
+  document.getElementById('tGst').textContent   = '₹' + gst.toFixed(2);
+  document.getElementById('gstLbl').textContent = on ? 'GST @' + rate + '%' : 'GST (off)';
+  document.getElementById('gstRow').style.opacity = on ? '1' : '0.4';
+  document.getElementById('tGrand').textContent = '₹' + (sub + gst).toFixed(2);
+}
+
+/* ─── Collect all data ─── */
+function collectData() {
+  var on   = document.getElementById('gstOn').checked;
+  var rate = parseFloat(document.getElementById('gstRate').value) || 0;
+  var sub  = 0;
+  var items = rows.map(function(id, i) {
+    var item   = (document.getElementById('item-' + id)  || {}).value || '';
+    var qtyRaw = (document.getElementById('qty-' + id)   || {}).value || '';
+    var qtyNum = parseQty(qtyRaw);
+    var price  = parseFloat((document.getElementById('price-' + id) || {}).value) || 0;
+    var fp     = qtyNum * price;
+    sub += fp;
+    return { sl: i + 1, item: item, qtyRaw: qtyRaw, qtyNum: qtyNum, price: price, fp: fp };
+  });
+  var gst = on ? sub * rate / 100 : 0;
+  return {
+    company:  document.getElementById('lhCompany').value || 'Company Name',
+    tag1:     document.getElementById('lhTag1').value,
+    tag2:     document.getElementById('lhTag2').value,
+    addr:     document.getElementById('lhAddr').value,
+    mobile:   document.getElementById('lhMobile').value,
+    email:    document.getElementById('lhEmail').value,
+    bankAcc:  document.getElementById('bankAcc').value,
+    bankIfsc: document.getElementById('bankIfsc').value,
+    bankName: document.getElementById('bankName').value,
+    bankType: document.getElementById('bankType').value,
+    nc:       document.getElementById('ncPick').value,
+    ac:       document.getElementById('acPick').value,
+    quoteNo:  document.getElementById('quoteNo').value  || '—',
+    date:     document.getElementById('quoteDate').value || new Date().toISOString().slice(0,10),
+    custName: document.getElementById('custName').value || '—',
+    custAddr: document.getElementById('custAddr').value || '',
+    notes:    document.getElementById('notes').value    || '',
+    items: items, sub: sub, on: on, rate: rate, gst: gst, grand: sub + gst
+  };
+}
+
+/* ─── Export PDF ─── */
+function exportPDF() {
+  var d = collectData();
+
+  function esc(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
-  /* ── Live preview ── */
-  function updatePreview() {
-    const company  = document.getElementById('lhCompany').value  || 'Company Name';
-    const tag1     = document.getElementById('lhTag1').value;
-    const tag2     = document.getElementById('lhTag2').value;
-    const addr     = document.getElementById('lhAddress').value;
-    const mobile   = document.getElementById('lhMobile').value;
-    const email    = document.getElementById('lhEmail').value;
-    const nameCol  = document.getElementById('nameColor').value;
-    const accentCol= document.getElementById('accentColor').value;
+  /* address line */
+  var ap = [];
+  if (d.addr)   ap.push('Registered Office: ' + d.addr);
+  if (d.mobile) ap.push('Mobile: ' + d.mobile);
+  if (d.email)  ap.push('Mail: ' + d.email);
 
-    document.getElementById('prev-name').textContent = company;
-    document.getElementById('prev-name').style.color = nameCol;
-    document.getElementById('prev-tag1').textContent = tag1;
-    document.getElementById('prev-tag2').textContent = tag2;
+  /* item rows */
+  var iRows = d.items.map(function(r) {
+    return '<tr>' +
+      '<td style="text-align:center">' + r.sl + '</td>' +
+      '<td>' + esc(r.item || '—') + '</td>' +
+      '<td>' + esc(r.qtyRaw || '—') + '</td>' +
+      '<td class="r">&#8377; ' + r.price.toFixed(2) + '</td>' +
+      '<td class="pfp" style="color:' + d.ac + '">&#8377; ' + r.fp.toFixed(2) + '</td>' +
+      '</tr>';
+  }).join('');
 
-    let ap = [];
-    if (addr)   ap.push('Registered Office: ' + addr);
-    if (mobile) ap.push('Mobile: ' + mobile);
-    if (email)  ap.push('Mail: ' + email);
-    document.getElementById('prev-addr').textContent = ap.join('  |  ');
-    document.getElementById('lhPreview').style.borderBottom = `3px solid ${accentCol}`;
-  }
-  updatePreview();
+  /* gst row */
+  var gstRow = d.on
+    ? '<div class="ptot-row"><span>GST @ ' + d.rate + '%</span><span>&#8377; ' + d.gst.toFixed(2) + '</span></div>'
+    : '';
 
-  /* ── Row management ── */
-  let rows = [], nextId = 1;
+  /* bank block */
+  var bankRows = '';
+  if (d.bankAcc)  bankRows += '<div class="pbank-row"><span class="pbank-key">Account No</span><span class="pbank-val">' + esc(d.bankAcc) + '</span></div>';
+  if (d.bankIfsc) bankRows += '<div class="pbank-row"><span class="pbank-key">IFSC Code</span><span class="pbank-val">' + esc(d.bankIfsc) + '</span></div>';
+  if (d.bankName) bankRows += '<div class="pbank-row"><span class="pbank-key">Bank Name</span><span class="pbank-val">' + esc(d.bankName) + '</span></div>';
+  if (d.bankType) bankRows += '<div class="pbank-row"><span class="pbank-key">Acct. Type</span><span class="pbank-val">' + esc(d.bankType) + '</span></div>';
+  var bankBlock = bankRows
+    ? '<div class="pbank"><div class="pbank-lbl">&#127974; Bank / Payment Details</div>' + bankRows + '</div>'
+    : '';
+
+  /* notes block */
+  var notesBlock = d.notes
+    ? '<div class="pnotes" style="border-left-color:' + d.ac + '">' +
+        '<div class="pnotes-lbl" style="color:' + d.ac + '">Terms &amp; Notes</div>' +
+        '<div class="pnotes-txt">' + esc(d.notes) + '</div>' +
+      '</div>'
+    : '<div style="flex:1"></div>';
+
+  var html =
+    '<div class="plh" style="border-bottom-color:' + d.ac + '">' +
+      '<div class="plh-name" style="color:' + d.nc + '">' + esc(d.company) + '</div>' +
+      (d.tag1 ? '<div class="plh-tag">' + esc(d.tag1) + '</div>' : '') +
+      (d.tag2 ? '<div class="plh-tag">' + esc(d.tag2) + '</div>' : '') +
+      (ap.length ? '<div class="plh-addr">' + esc(ap.join('  |  ')) + '</div>' : '') +
+    '</div>' +
+
+    '<div class="pmeta">' +
+      '<div class="pmeta-l"><strong>To:</strong> ' + esc(d.custName) +
+        (d.custAddr ? '<br/><span style="font-size:9px;color:#666">' + esc(d.custAddr) + '</span>' : '') +
+      '</div>' +
+      '<div class="pmeta-r">' +
+        '<div class="pqt-lbl" style="color:' + d.nc + '">QUOTATION</div>' +
+        '<div class="pqt-val">No: ' + esc(d.quoteNo) + '</div>' +
+        '<div class="pqt-val">Date: ' + esc(d.date) + '</div>' +
+      '</div>' +
+    '</div>' +
+
+    '<table class="ptable">' +
+      '<thead><tr style="background:' + d.nc + '">' +
+        '<th style="width:36px;text-align:center">SL NO</th>' +
+        '<th>ITEM DESCRIPTION</th>' +
+        '<th style="width:70px">QTY</th>' +
+        '<th class="r" style="width:90px">UNIT PRICE</th>' +
+        '<th class="r" style="width:90px">FINAL PRICE</th>' +
+      '</tr></thead>' +
+      '<tbody>' + iRows + '</tbody>' +
+    '</table>' +
+
+    '<div class="ptots">' +
+      '<div class="ptots-inner">' +
+        '<div class="ptot-row"><span>Subtotal</span><span>&#8377; ' + d.sub.toFixed(2) + '</span></div>' +
+        gstRow +
+        '<div class="ptot-row grand" style="background:' + d.nc + '">' +
+          '<span>Grand Total</span>' +
+          '<span style="font-family:\'Courier New\',monospace">&#8377; ' + d.grand.toFixed(2) + '</span>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+
+    '<div class="pbottom">' + bankBlock + notesBlock + '</div>' +
+
+    '<div class="psign-row">' +
+      '<div class="psign">Authorised Signatory<br/>' + esc(d.company) + '</div>' +
+    '</div>' +
+
+    '<div class="pfooter">' +
+      '<span>Computer-generated quotation. Valid for 30 days from date of issue.</span>' +
+      '<span>' + esc(d.company) + '</span>' +
+    '</div>';
+
+  document.getElementById('printSheet').innerHTML = html;
+
+  setTimeout(function() {
+    window.print();
+    setTimeout(function() {
+      document.getElementById('printSheet').innerHTML = '';
+    }, 2000);
+  }, 200);
+}
+
+/* ─── New Quotation ─── */
+function newQuote() {
+  if (!confirm('Clear all quotation fields and start fresh?')) return;
+  ['quoteNo','custName','custAddr','notes'].forEach(function(id) {
+    document.getElementById(id).value = '';
+  });
   document.getElementById('quoteDate').valueAsDate = new Date();
+  rows.slice().forEach(function(id) {
+    var el = document.getElementById('row-' + id);
+    if (el) el.remove();
+  });
+  rows = [];
+  nextId = 1;
+  calcTotals();
+}
 
-  function addRow(item='', qty='', price='') {
-    const id = nextId++;
-    rows.push(id);
-    const tr = document.createElement('tr');
-    tr.id = `row-${id}`;
-    tr.innerHTML = `
-      <td><span class="sl-badge" id="sl-${id}"></span></td>
-      <td><input class="td-input" placeholder="Item description" id="item-${id}" value="${item}" oninput="recalcRow(${id})"/></td>
-      <td><input class="td-input mono" placeholder="e.g. 2 Nos" id="qty-${id}" type="text" value="${qty}" oninput="recalcRow(${id})"/></td>
-      <td><input class="td-input mono" placeholder="0.00" id="price-${id}" type="number" min="0" step="0.01" value="${price}" oninput="recalcRow(${id})"/></td>
-      <td><div class="final-price" id="fp-${id}">₹0.00</div></td>
-      <td><button class="delete-btn" onclick="deleteRow(${id})">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
-          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-          <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
-        </svg>
-      </button></td>`;
-    document.getElementById('itemsBody').appendChild(tr);
-    recalcRow(id); renumberRows();
-    if (!item) setTimeout(() => document.getElementById(`item-${id}`)?.focus(), 50);
-  }
+/* ─── Toast ─── */
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2800);
+}
 
-  function deleteRow(id) {
-    rows = rows.filter(r => r !== id);
-    document.getElementById(`row-${id}`)?.remove();
-    renumberRows(); recalcTotals();
-  }
-  function renumberRows() {
-    rows.forEach((id, i) => {
-      const el = document.getElementById(`sl-${id}`);
-      if (el) el.textContent = String(i+1).padStart(2,'0');
-    });
-  }
-  /* Extract leading number from qty text, e.g. "2 Nos" → 2, "1.5 Sets" → 1.5, "Lot" → 0 */
-  function parseQty(val) {
-    const m = String(val || '').match(/[\d.]+/);
-    return m ? parseFloat(m[0]) || 0 : 0;
-  }
-
-  function recalcRow(id) {
-    const qty   = parseQty(document.getElementById(`qty-${id}`)?.value);
-    const price = parseFloat(document.getElementById(`price-${id}`)?.value) || 0;
-    const fpEl  = document.getElementById(`fp-${id}`);
-    if (fpEl) fpEl.textContent = qty > 0 ? '₹' + (qty * price).toFixed(2) : '—';
-    recalcTotals();
-  }
-  function recalcTotals() {
-    let sub = 0;
-    rows.forEach(id => {
-      sub += parseQty(document.getElementById(`qty-${id}`)?.value)
-           * (parseFloat(document.getElementById(`price-${id}`)?.value) || 0);
-    });
-    const gstOn   = document.getElementById('gstToggle').checked;
-    const gstRate = parseFloat(document.getElementById('gstRate').value) || 0;
-    const gstAmt  = gstOn ? sub * gstRate / 100 : 0;
-    document.getElementById('subtotalDisp').textContent = '₹' + sub.toFixed(2);
-    document.getElementById('gstDisp').textContent      = '₹' + gstAmt.toFixed(2);
-    document.getElementById('gstLabel').textContent     = gstOn ? `GST @${gstRate}%` : 'GST (off)';
-    document.getElementById('gstRow').style.opacity     = gstOn ? '1' : '0.4';
-    document.getElementById('grandDisp').textContent    = '₹' + (sub + gstAmt).toFixed(2);
-  }
-
-  /* ── Collect data ── */
-  function collectData() {
-    const gstOn   = document.getElementById('gstToggle').checked;
-    const gstRate = parseFloat(document.getElementById('gstRate').value) || 0;
-    let sub = 0;
-    const items = rows.map((id, i) => {
-      const item     = document.getElementById(`item-${id}`)?.value  || '';
-      const qtyRaw   = document.getElementById(`qty-${id}`)?.value   || '';
-      const qtyNum   = parseQty(qtyRaw);
-      const price    = parseFloat(document.getElementById(`price-${id}`)?.value) || 0;
-      const fp       = qtyNum * price; sub += fp;
-      return { sl: i+1, item, qtyRaw, qtyNum, price, fp };
-    });
-    const gstAmt = gstOn ? sub * gstRate / 100 : 0;
-    return {
-      lhCompany:   document.getElementById('lhCompany').value   || 'Company Name',
-      lhTag1:      document.getElementById('lhTag1').value,
-      lhTag2:      document.getElementById('lhTag2').value,
-      lhAddress:   document.getElementById('lhAddress').value,
-      lhMobile:    document.getElementById('lhMobile').value,
-      lhEmail:     document.getElementById('lhEmail').value,
-      AccNo:   document.getElementById('AccNo').value,
-      Ifsc:    document.getElementById('Ifsc').value,
-      Name:    document.getElementById('bankName').value,
-      bankType:    document.getElementById('bankType').value,
-      nameColor:   document.getElementById('nameColor').value,
-      accentColor: document.getElementById('accentColor').value,
-      quoteNo:  document.getElementById('quoteNo').value   || '—',
-      date:     document.getElementById('quoteDate').value || new Date().toISOString().slice(0,10),
-      customer: document.getElementById('customerName').value    || '—',
-      address:  document.getElementById('customerAddress').value || '—',
-      notes:    document.getElementById('notes').value || '',
-      items, sub, gstOn, gstRate, gstAmt, grand: sub + gstAmt
-    };
-  }
-
-  /* ── Export PDF via print dialog ── */
-  function exportPDF() {
-    const d = collectData();
-    const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
-
-    // address line
-    let ap = [];
-    if (d.lhAddress) ap.push('Registered Office: ' + d.lhAddress);
-    if (d.lhMobile)  ap.push('Mobile: ' + d.lhMobile);
-    if (d.lhEmail)   ap.push('Mail: ' + d.lhEmail);
-
-    // item rows
-    const itemRows = d.items.map(r => `
-      <tr>
-        <td style="text-align:center">${r.sl}</td>
-        <td>${esc(r.item) || '—'}</td>
-        <td class="r">${r.qty}</td>
-        <td class="r">&#8377; ${r.price.toFixed(2)}</td>
-        <td class="fp" style="color:${d.accentColor}">&#8377; ${r.fp.toFixed(2)}</td>
-      </tr>`).join('');
-
-    const gstRowHTML = d.gstOn
-      ? `<div class="ps-tot-row"><span>GST @ ${d.gstRate}%</span><span>&#8377; ${d.gstAmt.toFixed(2)}</span></div>` : '';
-
-    // bank details block
-    let bankRows = '';
-    if (d.bankAccNo) bankRows += `<div class="ps-bank-row"><span class="ps-bank-key">Account No</span><span class="ps-bank-val">${esc(d.bankAccNo)}</span></div>`;
-    if (d.bankIfsc)  bankRows += `<div class="ps-bank-row"><span class="ps-bank-key">IFSC Code</span><span class="ps-bank-val">${esc(d.bankIfsc)}</span></div>`;
-    if (d.bankName)  bankRows += `<div class="ps-bank-row"><span class="ps-bank-key">Bank Name</span><span class="ps-bank-val">${esc(d.bankName)}</span></div>`;
-    if (d.bankType)  bankRows += `<div class="ps-bank-row"><span class="ps-bank-key">Acct. Type</span><span class="ps-bank-val">${esc(d.bankType)}</span></div>`;
-    const bankHTML = bankRows ? `
-      <div class="ps-bank">
-        <div class="ps-bank-label">&#x1F3E6; Bank / Payment Details</div>
-        ${bankRows}
-      </div>` : '';
-
-    const notesHTML = d.notes ? `
-      <div class="ps-notes" style="border-left-color:${d.accentColor}">
-        <div class="ps-notes-label" style="color:${d.accentColor}">Terms &amp; Notes</div>
-        <div class="ps-notes-text">${esc(d.notes)}</div>
-      </div>` : '<div style="flex:1"></div>';
-
-    document.getElementById('printSheet').innerHTML = `
-      <div style="background:#fff;color:#111;font-family:'Segoe UI',Arial,sans-serif;font-size:11px">
-
-        <div class="ps-letterhead" style="border-bottom-color:${d.accentColor}">
-          <div class="ps-lh-name" style="color:${d.nameColor}">${esc(d.lhCompany)}</div>
-          ${d.lhTag1 ? `<div class="ps-lh-tag">${esc(d.lhTag1)}</div>` : ''}
-          ${d.lhTag2 ? `<div class="ps-lh-tag">${esc(d.lhTag2)}</div>` : ''}
-          ${ap.length ? `<div class="ps-lh-addr">${esc(ap.join('  |  '))}</div>` : ''}
-        </div>
-
-        <div class="ps-meta">
-          <div class="ps-meta-left">
-            <strong>To:</strong> ${esc(d.customer)}<br/>
-            <span style="font-size:9px;color:#666">${esc(d.address)}</span>
-          </div>
-          <div class="ps-meta-right">
-            <div class="ps-qt-label" style="color:${d.nameColor}">QUOTATION</div>
-            <div class="ps-qt-val">No: ${esc(d.quoteNo)}</div>
-            <div class="ps-qt-val">Date: ${esc(d.date)}</div>
-          </div>
-        </div>
-
-        <table class="ps-table">
-          <thead>
-            <tr style="background:${d.nameColor}">
-              <th style="color:#fff;width:36px;text-align:center">SL NO</th>
-              <th style="color:#fff">ITEM DESCRIPTION</th>
-              <th class="r" style="color:#fff;width:50px">QTY</th>
-              <th class="r" style="color:#fff;width:90px">UNIT PRICE</th>
-              <th class="r" style="color:#fff;width:90px">FINAL PRICE</th>
-            </tr>
-          </thead>
-          <tbody>${itemRows}</tbody>
-        </table>
-
-        <div class="ps-totals">
-          <div class="ps-totals-inner">
-            <div class="ps-tot-row"><span>Subtotal</span><span>&#8377; ${d.sub.toFixed(2)}</span></div>
-            ${gstRowHTML}
-            <div class="ps-tot-row grand" style="background:${d.nameColor}">
-              <span>Grand Total</span>
-              <span style="font-family:monospace">&#8377; ${d.grand.toFixed(2)}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="ps-bottom">
-          ${bankHTML}
-          ${notesHTML}
-        </div>
-
-        <div class="ps-sign-row">
-          <div class="ps-sign">Authorised Signatory<br/>${esc(d.lhCompany)}</div>
-        </div>
-
-        <div class="ps-footer">
-          <span>Computer-generated quotation. Valid for 30 days from date of issue.</span>
-          <span>${esc(d.lhCompany)}</span>
-        </div>
-      </div>`;
-
-    setTimeout(() => {
-      window.print();
-      setTimeout(() => { document.getElementById('printSheet').innerHTML = ''; }, 1500);
-    }, 160);
-  }
-
-  function clearForm() {
-    if (!confirm('Clear all quotation fields and start fresh?')) return;
-    ['quoteNo','customerName','customerAddress','notes'].forEach(id => {
-      document.getElementById(id).value = '';
-    });
-    document.getElementById('quoteDate').valueAsDate = new Date();
-    rows.forEach(id => document.getElementById(`row-${id}`)?.remove());
-    rows = []; nextId = 1;
-    recalcTotals();
-  }
-
-  addRow(); addRow(); addRow();
+/* ─── Init ─── */
+addRow(); addRow(); addRow();
 </script>
 </body>
 </html>
