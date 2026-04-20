@@ -178,56 +178,102 @@ td { padding: 4px 4px; vertical-align: middle; }
 #printSheet { display: none; }
 
 @media print {
-  @page { margin: 10mm 12mm; size: A4; }
-  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-scheme: light only !important; }
+  @page { margin: 12mm 14mm; size: A4; background: #ffffff; }
+
+  /* Force white everywhere — kills the grey body bleed */
+  html, body {
+    background: #ffffff !important;
+    margin: 0 !important; padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-scheme: light only !important;
+  }
+
   body > *:not(#printSheet) { display: none !important; }
+
+  /* All print elements: Arial = system font = copyable text in PDF */
+  #printSheet, #printSheet * {
+    font-family: Arial, Helvetica, sans-serif !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-scheme: light only !important;
+  }
+
   #printSheet {
     display: block !important;
     background: #ffffff !important;
     color: #111111 !important;
-    font-family: 'Segoe UI', Arial, sans-serif !important;
     font-size: 11px;
+    width: 100%;
   }
 
-  .plh { text-align: center; padding: 8px 0 10px; margin-bottom: 10px; border-bottom-width: 3px; border-bottom-style: solid; }
-  .plh-name { font-size: 22px; font-weight: 900; letter-spacing: .05em; margin-bottom: 4px; }
-  .plh-tag { font-size: 9.5px; color: #333 !important; line-height: 1.65; }
-  .plh-addr { font-size: 9px; color: #444 !important; line-height: 1.6; margin-top: 3px; }
+  /* Letterhead */
+  .plh { text-align: center; padding: 8px 0 10px; margin-bottom: 10px; border-bottom-width: 3px; border-bottom-style: solid; background: #ffffff !important; }
+  .plh-name { font-size: 22px; font-weight: 900; letter-spacing: .04em; margin-bottom: 4px; }
+  .plh-tag { font-size: 9.5px; color: #222222 !important; line-height: 1.65; }
+  .plh-addr { font-size: 9px; color: #444444 !important; line-height: 1.6; margin-top: 3px; }
 
-  .pmeta { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-  .pmeta-l { font-size: 9.5px; color: #333 !important; line-height: 1.7; }
+  /* Meta row */
+  .pmeta { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; background: #ffffff !important; }
+  .pmeta-l { font-size: 9.5px; color: #333333 !important; line-height: 1.8; }
   .pmeta-r { text-align: right; }
-  .pqt-lbl { font-size: 14px; font-weight: 800; letter-spacing: .04em; }
-  .pqt-val { font-size: 9.5px; color: #555 !important; margin-top: 2px; }
+  .pqt-lbl { font-size: 15px; font-weight: 900; letter-spacing: .06em; }
+  .pqt-val { font-size: 9.5px; color: #555555 !important; margin-top: 2px; }
 
+  /* Items table */
   .ptable { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
-  .ptable th { font-size: 8px; text-transform: uppercase; letter-spacing: .1em; padding: 6px 8px; text-align: left; color: #ffffff !important; }
+  .ptable th {
+    font-size: 8.5px; text-transform: uppercase; letter-spacing: .08em;
+    padding: 7px 8px; text-align: left; color: #ffffff !important;
+    font-weight: 700;
+  }
   .ptable th.r { text-align: right; }
-  .ptable td { padding: 6px 8px; border-bottom: 1px solid #ddddee; font-size: 10px; color: #111111 !important; background: #ffffff !important; }
-  .ptable td.r { text-align: right; font-family: 'Courier New', monospace; }
-  .ptable td.pfp { text-align: right; font-family: 'Courier New', monospace; font-weight: 700; }
-  .ptable tr:nth-child(even) td { background: #f7f8ff !important; }
+  .ptable td {
+    padding: 7px 8px; border-bottom: 1px solid #dddddd;
+    font-size: 10px; color: #111111 !important; background: #ffffff !important;
+  }
+  .ptable td.r { text-align: right; }
+  .ptable td.pfp { text-align: right; font-weight: 700; }
+  .ptable tr:nth-child(even) td { background: #f5f5f5 !important; }
 
+  /* Totals */
   .ptots { display: flex; justify-content: flex-end; margin-bottom: 10px; }
-  .ptots-inner { min-width: 220px; border: 1px solid #ddddee; border-radius: 4px; overflow: hidden; }
-  .ptot-row { display: flex; justify-content: space-between; padding: 5px 10px; font-size: 10px; color: #333333 !important; border-bottom: 1px solid #eeeeee; background: #ffffff !important; }
-  .ptot-row.grand { font-weight: 700; font-size: 13px; border-bottom: none; color: #ffffff !important; }
+  .ptots-inner { min-width: 230px; border: 1px solid #cccccc; border-radius: 3px; overflow: hidden; }
+  .ptot-row {
+    display: flex; justify-content: space-between; padding: 6px 10px;
+    font-size: 10px; color: #333333 !important; border-bottom: 1px solid #eeeeee;
+    background: #ffffff !important;
+  }
+  .ptot-row.grand { font-weight: 700; font-size: 12px; border-bottom: none; }
   .ptot-row.grand span { color: #ffffff !important; }
 
-  .pbottom { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; gap: 12px; }
-  .pbank { border: 1px solid #ddddee; border-radius: 4px; padding: 8px 12px; min-width: 180px; background: #f9f9ff !important; }
-  .pbank-lbl { font-size: 7px; text-transform: uppercase; letter-spacing: .12em; font-weight: 700; color: #555555 !important; margin-bottom: 5px; }
-  .pbank-row { font-size: 9.5px; color: #111111 !important; display: flex; gap: 6px; margin-bottom: 3px; }
-  .pbank-key { font-weight: 600; min-width: 72px; color: #333333 !important; font-size: 9px; }
-  .pbank-val { font-family: 'Courier New', monospace; color: #111111 !important; font-size: 9.5px; }
+  /* Bank + Notes bottom row */
+  .pbottom { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; background: #ffffff !important; }
+  .pbank {
+    border: 1px solid #cccccc; border-radius: 3px; padding: 8px 12px;
+    min-width: 185px; background: #f8f8f8 !important;
+  }
+  .pbank-lbl { font-size: 7.5px; text-transform: uppercase; letter-spacing: .1em; font-weight: 700; color: #555555 !important; margin-bottom: 6px; }
+  .pbank-row { font-size: 9.5px; color: #111111 !important; display: flex; gap: 6px; margin-bottom: 4px; align-items: baseline; }
+  .pbank-key { font-weight: 700; min-width: 75px; color: #333333 !important; font-size: 9px; }
+  .pbank-val { color: #111111 !important; font-size: 9.5px; letter-spacing: .02em; }
 
-  .pnotes { flex: 1; border-left-width: 3px; border-left-style: solid; border-radius: 3px; padding: 8px 12px; background: #fffbeb !important; }
-  .pnotes-lbl { font-size: 7px; text-transform: uppercase; letter-spacing: .1em; font-weight: 700; margin-bottom: 4px; }
-  .pnotes-txt { font-size: 9px; color: #555555 !important; line-height: 1.5; white-space: pre-wrap; }
+  .pnotes { flex: 1; border-left: 3px solid; border-radius: 3px; padding: 8px 12px; background: #fffbeb !important; }
+  .pnotes-lbl { font-size: 7.5px; text-transform: uppercase; letter-spacing: .1em; font-weight: 700; margin-bottom: 4px; }
+  .pnotes-txt { font-size: 9px; color: #555555 !important; line-height: 1.6; white-space: pre-wrap; }
 
-  .psign-row { display: flex; justify-content: flex-end; margin-bottom: 8px; }
-  .psign { border-top: 1px solid #888888; width: 140px; padding-top: 5px; font-size: 8px; color: #555555 !important; text-align: center; margin-top: 24px; }
-  .pfooter { border-top: 1px solid #cccccc; padding-top: 5px; display: flex; justify-content: space-between; font-size: 7.5px; color: #999999 !important; }
+  /* Signature */
+  .psign-row { display: flex; justify-content: flex-end; margin-bottom: 6px; background: #ffffff !important; }
+  .psign { border-top: 1px solid #888888; width: 150px; padding-top: 5px; font-size: 8.5px; color: #444444 !important; text-align: center; margin-top: 28px; }
+
+  /* Footer — inline with last line, no extra space */
+  .pfooter {
+    border-top: 1px solid #cccccc; padding-top: 5px;
+    display: flex; justify-content: space-between;
+    font-size: 7.5px; color: #888888 !important;
+    background: #ffffff !important;
+    margin-top: 4px;
+  }
 }
 </style>
 </head>
@@ -625,7 +671,7 @@ function exportPDF() {
   if (d.bankName) bankRows += '<div class="pbank-row"><span class="pbank-key">Bank Name</span><span class="pbank-val">' + esc(d.bankName) + '</span></div>';
   if (d.bankType) bankRows += '<div class="pbank-row"><span class="pbank-key">Acct. Type</span><span class="pbank-val">' + esc(d.bankType) + '</span></div>';
   var bankBlock = bankRows
-    ? '<div class="pbank"><div class="pbank-lbl">&#127974; Bank / Payment Details</div>' + bankRows + '</div>'
+    ? '<div class="pbank"><div class="pbank-lbl">BANK / PAYMENT DETAILS</div>' + bankRows + '</div>'
     : '';
 
   /* notes block */
@@ -634,7 +680,7 @@ function exportPDF() {
         '<div class="pnotes-lbl" style="color:' + d.ac + '">Terms &amp; Notes</div>' +
         '<div class="pnotes-txt">' + esc(d.notes) + '</div>' +
       '</div>'
-    : '<div style="flex:1"></div>';
+    : '';
 
   var html =
     '<div class="plh" style="border-bottom-color:' + d.ac + '">' +
@@ -677,7 +723,7 @@ function exportPDF() {
       '</div>' +
     '</div>' +
 
-    '<div class="pbottom">' + bankBlock + notesBlock + '</div>' +
+    ((bankBlock || notesBlock) ? '<div class="pbottom">' + bankBlock + notesBlock + '</div>' : '') +
 
     '<div class="psign-row">' +
       '<div class="psign">Authorised Signatory<br/>' + esc(d.company) + '</div>' +
@@ -688,7 +734,9 @@ function exportPDF() {
       '<span>' + esc(d.company) + '</span>' +
     '</div>';
 
-  document.getElementById('printSheet').innerHTML = html;
+  document.getElementById('printSheet').innerHTML =
+    '<div style="background:#ffffff;color:#111111;width:100%;font-family:Arial,Helvetica,sans-serif;">' +
+    html + '</div>';
 
   setTimeout(function() {
     window.print();
