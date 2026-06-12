@@ -329,9 +329,45 @@ td { padding: 4px 4px; vertical-align: middle; }
           <div class="fg"><label class="fl">IFSC Code</label>
             <input class="fi sm" id="bankIfsc" value="PSIB0000923"/></div>
           <div class="fg"><label class="fl">Bank Name <span style="color:var(--text-muted);font-size:8px">(optional)</span></label>
-            <input class="fi sm" id="bankName" placeholder="e.g. Punjab &amp; Sind Bank"/></div>
+            <select class="fi sm" id="bankName">
+<option value="">Select Bank</option>
+<option>State Bank of India (SBI)</option>
+<option>HDFC Bank</option>
+<option>ICICI Bank</option>
+<option>Axis Bank</option>
+<option>Kotak Mahindra Bank</option>
+<option>Punjab National Bank (PNB)</option>
+<option>Bank of Baroda</option>
+<option>Canara Bank</option>
+<option>Union Bank of India</option>
+<option>Indian Bank</option>
+<option>Bank of India</option>
+<option>Central Bank of India</option>
+<option>Indian Overseas Bank</option>
+<option>UCO Bank</option>
+<option>Punjab & Sind Bank</option>
+<option>IDBI Bank</option>
+<option>IDFC FIRST Bank</option>
+<option>Yes Bank</option>
+<option>Federal Bank</option>
+<option>South Indian Bank</option>
+<option>Karnataka Bank</option>
+<option>Karur Vysya Bank</option>
+<option>City Union Bank</option>
+<option>RBL Bank</option>
+<option>Bandhan Bank</option>
+<option>IndusInd Bank</option>
+<option>AU Small Finance Bank</option>
+</select></div>
           <div class="fg"><label class="fl">Account Type <span style="color:var(--text-muted);font-size:8px">(optional)</span></label>
-            <input class="fi sm" id="bankType" placeholder="e.g. Current / Savings"/></div>
+            <select class="fi sm" id="bankType">
+<option value="">Select Account Type</option>
+<option>Savings Account</option>
+<option>Current Account</option>
+<option>Salary Account</option>
+<option>Cash Credit (CC)</option>
+<option>Overdraft (OD)</option>
+</select></div>
 
           <div class="fg">
             <label class="fl">Company Name Colour</label>
@@ -376,6 +412,8 @@ td { padding: 4px 4px; vertical-align: middle; }
         <input class="fi" type="date" id="quoteDate"/></div>
       <div class="fg full"><label class="fl">Customer / Consumer Name</label>
         <input class="fi" id="custName" placeholder="Consumer or organization name"/></div>
+      <div class="fg full"><label class="fl">Quotation Heading</label>
+        <input class="fi" id="quoteHeading" placeholder="e.g. BESCOM Service Connection Estimate"/></div>
       <div class="fg full"><label class="fl">Site / Service Address</label>
         <input class="fi" id="custAddr" placeholder="Installation site address"/></div>
     </div>
@@ -626,12 +664,23 @@ function collectData() {
     nc:       document.getElementById('ncPick').value,
     ac:       document.getElementById('acPick').value,
     quoteNo:  document.getElementById('quoteNo').value  || '—',
-    date:     document.getElementById('quoteDate').value || new Date().toISOString().slice(0,10),
+    quoteHeading: document.getElementById('quoteHeading').value || '',
+    date: formatDateDDMMYY(document.getElementById('quoteDate').value || new Date().toISOString().slice(0,10)),
     custName: document.getElementById('custName').value || '—',
     custAddr: document.getElementById('custAddr').value || '',
     notes:    document.getElementById('notes').value    || '',
     items: items, sub: sub, on: on, rate: rate, gst: gst, grand: sub + gst
   };
+}
+
+
+function formatDateDDMMYY(dateStr){
+  if(!dateStr) return '';
+  var d=new Date(dateStr);
+  var day=String(d.getDate()).padStart(2,'0');
+  var month=String(d.getMonth()+1).padStart(2,'0');
+  var year=String(d.getFullYear()).slice(-2);
+  return day+'-'+month+'-'+year;
 }
 
 /* ─── Export PDF ─── */
@@ -700,6 +749,8 @@ function exportPDF() {
         '<div class="pqt-val">Date: ' + esc(d.date) + '</div>' +
       '</div>' +
     '</div>' +
+
+    (d.quoteHeading ? '<div style="text-align:center;font-size:14px;font-weight:700;margin:12px 0;color:'+d.nc+';">'+esc(d.quoteHeading)+'</div>' : '') +
 
     '<table class="ptable">' +
       '<thead><tr style="background:' + d.nc + '">' +
