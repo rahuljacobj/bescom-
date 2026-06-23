@@ -691,7 +691,7 @@ function collectData() {
     bankType: document.getElementById('bankType').value,
     nc:       document.getElementById('ncPick').value,
     ac:       document.getElementById('acPick').value,
-    quoteNo:  document.getElementById('quoteNo').value  || '—',
+    quoteNo: '—',
     quoteHeading: document.getElementById('quoteHeading').value || '',
     date: formatDateDDMMYY(document.getElementById('quoteDate').value || new Date().toISOString().slice(0,10)),
     custName: document.getElementById('custName').value || '—',
@@ -712,6 +712,8 @@ function formatDateDDMMYY(dateStr){
 }
 
 /* ─── Export PDF ─── */
+  function exportPDF() {
+  console.log("Export clicked");
 function exportPDF() {
   var d = collectData();
 
