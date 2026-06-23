@@ -121,6 +121,8 @@ td { padding: 4px 4px; vertical-align: middle; }
 .fp { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--accent); text-align: right; padding-right: 10px; }
 .delbtn { background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 6px; border-radius: 4px; display: flex; align-items: center; transition: color .15s, background .15s; }
 .delbtn:hover { color: #dc2626; background: rgba(220,38,38,.08); }
+.movebtn { background:none;border:none;cursor:pointer;color:var(--text-muted);padding:4px;border-radius:4px; }
+.movebtn:hover { color:var(--accent); background:var(--accent-dim); }
 
 .addbtn {
   display: flex; align-items: center; gap: 8px; background: none;
@@ -576,7 +578,10 @@ function addRow(item, qty, price) {
     '<td><input class="tdi" placeholder="e.g. 2 Nos" id="qty-' + id + '" oninput="calcRow(' + id + ')"/></td>' +
     '<td><input class="tdi mn" placeholder="0.00" id="price-' + id + '" type="number" min="0" step="0.01" oninput="calcRow(' + id + ')"/></td>' +
     '<td><div class="fp" id="fp-' + id + '">—</div></td>' +
-    '<td><button class="delbtn" onclick="delRow(' + id + ')">' +
+    '<td style="display:flex;gap:2px">' +
+    '<button class="movebtn" onclick="moveUp(' + id + ')">↑</button>' +
+    '<button class="movebtn" onclick="moveDown(' + id + ')">↓</button>' +
+    '<button class="delbtn" onclick="delRow(' + id + ')">' +
       '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">' +
       '<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>' +
       '<path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>' +
@@ -598,6 +603,30 @@ function delRow(id) {
   if (el) el.remove();
   renumber();
   calcTotals();
+}
+
+
+function moveUp(id){
+  var idx = rows.indexOf(id);
+  if(idx <= 0) return;
+  [rows[idx-1], rows[idx]] = [rows[idx], rows[idx-1]];
+  renderOrder();
+}
+
+function moveDown(id){
+  var idx = rows.indexOf(id);
+  if(idx < 0 || idx >= rows.length-1) return;
+  [rows[idx+1], rows[idx]] = [rows[idx], rows[idx+1]];
+  renderOrder();
+}
+
+function renderOrder(){
+  var tbody = document.getElementById('tbody');
+  rows.forEach(function(id){
+    var row = document.getElementById('row-'+id);
+    if(row) tbody.appendChild(row);
+  });
+  renumber();
 }
 
 function renumber() {
