@@ -38,7 +38,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--sans); min-
   height: 56px; position: sticky; top: 0; z-index: 100;
   box-shadow: 0 2px 8px rgba(0,0,0,.06);
 }
-.app-logo { font-size: 17px; font-weight: 700; color: var(--accent); display: flex; align-items: center; gap: 8px; }
+.app-logo { font-size: 15px; font-weight: 700; color: var(--accent); display: flex; align-items: center; gap: 8px; }
 .header-tag {
   font-family: var(--mono); font-size: 10px; color: var(--text-muted);
   letter-spacing: .1em; text-transform: uppercase;
@@ -284,9 +284,9 @@ td { padding: 4px 4px; vertical-align: middle; }
 <header class="app-header">
   <div class="app-logo">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-    QuoteForge
+    quotation
   </div>
-  <div class="header-tag">BESCOM Contractor Tool</div>
+  <div class="header-tag"> Contractor Tool</div>
 </header>
 
 <div class="main">
@@ -408,8 +408,7 @@ td { padding: 4px 4px; vertical-align: middle; }
   <div class="section-label">Customer &amp; Quotation Details</div>
   <div class="card">
     <div class="grid2">
-      <div class="fg"><label class="fl">Quotation Number</label>
-        <input class="fi" id="quoteNo" placeholder="e.g. QT-2026-001"/></div>
+     
       <div class="fg"><label class="fl">Date</label>
         <input class="fi" type="date" id="quoteDate"/></div>
       <div class="fg full"><label class="fl">Customer / Consumer Name</label>
@@ -454,7 +453,7 @@ td { padding: 4px 4px; vertical-align: middle; }
             <input class="gst-num" id="gstRate" type="number" value="18" min="0" max="100" oninput="calcTotals()"/>
             <span style="font-family:var(--mono);font-size:12px;color:var(--text-muted)">%</span>
             <label class="tog">
-              <input type="checkbox" id="gstOn" checked onchange="calcTotals()"/>
+              <input type="checkbox disabled" id="gstOn" checked onchange="calcTotals()"/>
               <div class="tog-track"></div>
               <div class="tog-thumb"></div>
             </label>
